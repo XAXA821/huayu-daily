@@ -330,7 +330,7 @@ function renderLogin(){
     S.name=a;store.set('pr_name',a);
     if(!PREVIEW){
       try{const r=await fetch(`${CONFIG.API_URL}?action=week&name=${encodeURIComponent(a)}`);const j=await r.json();
-        if((j.dates||[]).includes(dateOf(S.day).iso)){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(j.dates)}</div>`;return}}catch(err){}
+        if((j.dates||[]).includes(dateOf(S.day).iso)){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(j.dates,j.scores)}</div>`;return}}catch(err){}
     }
     S.results=[];S.recs={};
     runQuiz(0,vocabQs());
@@ -567,7 +567,8 @@ async function submit(items){
     const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,score:score100,correct:score,total,results:S.results,audios});
     const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
     const j=await r.json();if(!j.ok)throw new Error(j.error||'error');
-    renderDone(score,total,j.dates||[dateOf(S.day).iso]);
+    const sc=j.scores||{};if(sc[dateOf(S.day).iso]==null)sc[dateOf(S.day).iso]=score100;
+    renderDone(score,total,j.dates||[dateOf(S.day).iso],sc);
   }catch(e){
     btn.disabled=false;btn.textContent='Try again';
     $('#err').textContent='Not sent. Check your internet connection and try again.';
@@ -575,23 +576,26 @@ async function submit(items){
 }
 
 /* ================= 完成＋本週繳交紀錄 ================= */
-function weekHTML(dates){
-  const done=new Set(dates||[]);const today=S.day;let n=0;
-  const cells=DAYS.map((_,i)=>{const d=dateOf(i);const y=done.has(d.iso);if(y)n++;
-    const cls=y?'y':i<today?'n':'';const mark=y?'1':i<today?'0':'–';
+function weekHTML(dates,scores){
+  scores=scores||{};const done=new Set(dates||[]);const today=S.day;let n=0;const got=[];
+  const cells=DAYS.map((_,i)=>{const d=dateOf(i);const y=done.has(d.iso);
+    let mark='–',cls='';
+    if(y){n++;const v=scores[d.iso];mark=v==null?'✓':Math.round(v);cls='y';if(v!=null)got.push(Number(v))}
+    else if(i<today){mark='0';cls='n';got.push(0)}
     return`<div class="${cls}">${d.short}<b>${mark}</b></div>`}).join('');
   const past=Math.min(today+1,DAYS.length);
-  return`<h2 style="font-size:18px;margin:18px 0 0">This week</h2><p class="note" style="margin:4px 0 0">1 = submitted, 0 = missed. So far: ${n} submitted, ${past-n} missed.</p><div class="week">${cells}</div>`;
+  const avg=got.length?Math.round(got.reduce((a,b)=>a+b,0)/got.length):null;
+  return`<h2 style="font-size:18px;margin:18px 0 0">My scores (out of 100)</h2><p class="note" style="margin:4px 0 0">0 = missed. Submitted: ${n}, missed: ${past-n}${avg==null?'':` · Average: ${avg}`}</p><div class="week">${cells}</div>`;
 }
-function renderDone(score,total,dates){
+function renderDone(score,total,dates,scores){
   S.step=6;header();
   const secs=['生詞','填空','重組','閱讀','聽力'].map(s=>{const rs=S.results.filter(r=>r.sec===s);return`<tr><td>${{生詞:'Vocabulary Quiz',填空:'Multiple Choice',重組:'Sentence Order',閱讀:'Reading',聽力:'Listening'}[s]}</td><td>${rs.filter(r=>r.ok).length} / ${rs.length}</td></tr>`}).join('');
   const preview=dates===null;
-  if(preview){dates=[];for(let i=0;i<=S.day;i++)if(i!==1)dates.push(dateOf(i).iso)}
+  if(preview){dates=[];scores={};const samp=[86,0,77,91,82,95];for(let i=0;i<=S.day;i++)if(i!==1){dates.push(dateOf(i).iso);scores[dateOf(i).iso]=i===S.day?Math.round(score/(total||1)*100):samp[i]}}
   app.innerHTML=`<h1>Done for today!</h1><div class="panel"><div class="score">${total?Math.round(score/total*100):0} 分</div><p class="note" style="text-align:center;margin:0 0 8px">${score} / ${total} correct</p>
   <table class="res">${secs}<tr><td>Recording</td><td>${Object.keys(S.recs).length} submitted</td></tr></table>
-  ${weekHTML(dates)}
-  ${preview?'<p class="note">Teacher preview: this week’s record is sample data (day 2 marked as missed). Nothing was submitted.</p>':''}
+  ${weekHTML(dates,scores)}
+  ${preview?'<p class="note">Teacher preview: earlier scores are sample data (day 2 marked as missed). Nothing was submitted.</p>':''}
   <p class="note">New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m. See you tomorrow.</p></div>`;
 }
 
