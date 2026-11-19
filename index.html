@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>時代華語每日練習（字卡版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#F4F7F6; --surface:#FFFFFF; --ink:#17302A; --muted:#5E7069; --line:#D9E3DF;
+  --accent:#1E6B57; --accent-ink:#FFFFFF; --accent-soft:#E2F0EB;
+  --ok:#1F7A3E; --ok-soft:#E3F4E8; --bad:#B4372F; --bad-soft:#FBE7E5; --warn:#8A5A00; --warn-soft:#FFF3D6;
+  --rec:#C2362C; --rec-ink:#FFFFFF;
+  --f-ui:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-han:"Noto Serif TC","PingFang TC","Songti TC",serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);margin:0}
+body{color:var(--ink);font-family:var(--f-ui);font-size:17px;line-height:1.6;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:32px}
+.wrap{max-width:520px;margin:0 auto}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.top{position:sticky;top:0;z-index:5;background:var(--bg);padding-block:12px 10px}
+.top-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.brand{font-weight:700;font-size:15px;letter-spacing:.02em}
+.who{font-size:14px;color:var(--muted);text-align:right}
+.steps{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.steps span{height:5px;border-radius:3px;background:var(--line)}
+.steps span.done{background:var(--accent)}
+.steps span.now{background:var(--accent);opacity:.45}
+.step-name{font-size:13px;color:var(--muted);margin-top:6px}
+
+.teacher{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.teacher button{border:1px solid currentColor;background:transparent;border-radius:6px;padding:2px 8px;font-size:13px;cursor:pointer;color:var(--warn)}
+.teacher button.on{background:var(--warn);color:var(--warn-soft)}
+
+h1{font-size:24px;line-height:1.3;margin:20px 0 6px}
+.sub{color:var(--muted);font-size:15px;margin:0 0 16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stack{display:flex;flex-direction:column;gap:12px}
+label{font-size:15px;font-weight:500}
+select,input[type=text]{width:100%;font:inherit;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:17px;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:var(--bad);font-size:15px;min-height:1.4em}
+.note{font-size:14px;color:var(--muted)}
+.count{font-size:14px;color:var(--muted);margin:0 0 10px;font-variant-numeric:tabular-nums}
+
+/* 字卡 */
+.cardbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.cardbar .grp{display:flex;gap:6px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
+.chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.flip{perspective:1400px;height:300px;cursor:pointer;margin-bottom:12px}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.flip.turned .flip-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.face.back{transform:rotateY(180deg)}
+.c-han{font-family:var(--f-han);font-size:76px;font-weight:700;line-height:1.15}
+.back .c-han{font-size:40px;margin-bottom:8px}
+.c-py{font-size:30px;color:var(--accent);margin-bottom:4px}
+.c-en{font-size:21px;color:var(--muted)}
+.c-hint{position:absolute;bottom:12px;font-size:13px;color:var(--muted)}
+.c-say{position:absolute;top:12px;right:12px;border:0;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:700;cursor:pointer}
+table.vlist{width:100%;border-collapse:collapse}
+.vlist td{padding:10px 4px;border-bottom:1px solid var(--line);vertical-align:middle}
+.vlist tr:last-child td{border-bottom:0}
+.vlist .h{font-family:var(--f-han);font-size:24px;font-weight:700;white-space:nowrap}
+.vlist .p{color:var(--accent)}
+.vlist .e{color:var(--muted);font-size:15px}
+.vlist button{border:0;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 10px;cursor:pointer}
+
+.q{font-size:20px;font-weight:500;margin:4px 0 14px}
+.qhan{font-family:var(--f-han);font-size:56px;font-weight:700;line-height:1.2;text-align:center;margin:6px 0 16px}
+.listen-big{display:flex;justify-content:center;margin:6px 0 16px}
+.listen-big button{width:88px;height:88px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700;cursor:pointer}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 14px;font-size:18px;cursor:pointer;color:var(--ink)}
+.opt.han{font-family:var(--f-han);font-size:24px;font-weight:600}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.fb{margin-top:12px;font-size:16px;font-weight:500}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.tag{display:inline-block;font-size:12px;letter-spacing:.06em;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-bottom:8px}
+.passage{font-family:var(--f-han);font-size:20px;line-height:1.9;background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:48px}
+.answer{border:1.5px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:12px}
+.tile{border:1.5px solid var(--accent);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;font-size:19px;cursor:pointer;font-family:var(--f-han);font-weight:600}
+.answer .tile{background:var(--accent-soft)}
+.play{display:flex;gap:10px;margin-bottom:14px}
+.play .btn{flex:1}
+
+.recitem{display:flex;flex-direction:column;gap:10px}
+.recitem + .recitem{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.sent{font-family:var(--f-han);font-size:21px;line-height:1.7}
+.rbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.recbtn{border:0;border-radius:999px;padding:10px 18px;background:var(--rec);color:var(--rec-ink);font-weight:700;cursor:pointer}
+.recbtn.stop{background:var(--ink);color:var(--bg)}
+.small{border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer}
+.meter{flex:1;min-width:80px;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .1s}
+.timer{font-variant-numeric:tabular-nums;color:var(--muted);font-size:15px}
+.okmark{color:var(--ok);font-weight:700;font-size:15px}
+audio{width:100%}
+.score{font-size:44px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;margin:8px 0}
+table.res{width:100%;border-collapse:collapse;font-size:16px}
+table.res td{padding:8px 4px;border-bottom:1px solid var(--line)}
+table.res td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.week div{text-align:center;border-radius:10px;padding:8px 2px;font-size:13px;background:var(--bg);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.week b{display:block;font-size:20px;margin-top:2px}
+.week .y{background:var(--ok-soft);border-color:var(--ok)} .week .y b{color:var(--ok)}
+.week .n{background:var(--bad-soft);border-color:var(--bad)} .week .n b{color:var(--bad)}
+@media (prefers-reduced-motion: no-preference){.panel{animation:in .25s ease-out}@keyframes in{from{transform:translateY(6px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="top-row"><div class="brand" id="brand">Modern Chinese Daily Practice</div><div class="who" id="who"></div></div>
+    <div class="steps" id="steps" hidden><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="step-name" id="stepName"></div>
+    <div class="teacher" id="teacher" hidden></div>
+  </div>
+  <main id="app"></main>
+</div>
+
+<script>
+/* ================= 設定 ================= */
+const CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/AKfycbwudpdxzQQIde83uCxUeRszUdR8OTKJMJL8kNd5rQBzl4Hs5c_OmGJag6UeV0DIuKOkmw/exec',               // Google Apps Script 網址（設定後才會真的送出）
+  START_DATE: '2026-11-20',  // 第一天的日期
+  SWITCH_HOUR: 6,            // 每天幾點換新內容（台灣時間）
+  LESSON: 'L2'
+};
+const STUDENTS = ['丁福林','阮金芝','帕努奇','阿布杜拉','阮氏黎芳','麗提卡','宗雪山','卡拉杰','陳靖涵','高協和','林書妍','老師測試'];   // 範例名單，之後換成新班學生
+
+/* ================= 新課生詞 L2（第幾天出現） ================= */
+const VOCAB = [
+ [1,'幾','jǐ','how many; which (number)'],[1,'點鐘','diǎnzhōng','o’clock'],[1,'分','fēn','minute'],[1,'現在','xiànzài','now'],
+ [1,'早上','zǎoshàng','morning'],[1,'上午','shàngwǔ','morning (before noon)'],[1,'中午','zhōngwǔ','noon'],[1,'下午','xiàwǔ','afternoon'],
+ [2,'今天','jīntiān','today'],[2,'星期','xīngqí','week; day of the week'],[2,'月','yuè','month'],[2,'號','hào','day of the month (spoken)'],
+ [2,'日','rì','day of the month (written)'],[2,'有','yǒu','to have'],[2,'沒','méi','not (have)'],[2,'課','kè','class; lesson'],
+ [3,'去','qù','to go'],[3,'學校','xuéxiào','school'],[3,'圖書館','túshūguǎn','library'],[3,'上課','shàngkè','to go to class'],
+ [3,'下課','xiàkè','to finish class'],[3,'回家','huíjiā','to go home'],
+ [4,'家','jiā','home; family'],[4,'家人','jiārén','family members'],[4,'爸爸','bàba','dad'],[4,'媽媽','māma','mom'],[4,'孩子','háizi','child']
+].map(([d,h,p,e])=>({d,h,p,e}));
+
+/* ================= 舊課生詞 L0、L1（只在最後兩天的字卡和生詞測驗出現） ================= */
+const OLD_VOCAB = [
+ ['L0','一','yī','one'],['L0','二','èr','two'],['L0','三','sān','three'],['L0','四','sì','four'],['L0','五','wǔ','five'],
+ ['L0','六','liù','six'],['L0','七','qī','seven'],['L0','八','bā','eight'],['L0','九','jiǔ','nine'],['L0','十','shí','ten'],
+ ['L0','你','nǐ','you'],['L0','我','wǒ','I; me'],['L0','他','tā','he; him'],['L0','您','nín','you (polite)'],['L0','是','shì','to be'],
+ ['L0','人','rén','person'],['L0','先生','xiānshēng','Mr.; husband'],['L0','小姐','xiǎojiě','Miss; Ms.'],['L0','太太','tàitai','Mrs.; wife'],
+ ['L1','新','xīn','new'],['L1','同學','tóngxué','classmate'],['L1','她','tā','she; her'],['L1','誰','shéi','who'],['L1','叫','jiào','to be called'],
+ ['L1','姓','xìng','to be surnamed'],['L1','很','hěn','very'],['L1','哪','nǎ','which'],['L1','國','guó','country'],['L1','妳','nǐ','you (female)'],
+ ['L1','知道','zhīdào','to know'],['L1','嗎','ma','question particle'],['L1','日本','Rìběn','Japan'],['L1','台灣','Táiwān','Taiwan'],
+ ['L1','中國','Zhōngguó','China'],['L1','美國','Měiguó','the United States'],['L1','英國','Yīngguó','the United Kingdom'],['L1','漂亮','piàoliàng','pretty'],
+ ['L1','你好','nǐhǎo','hello'],['L1','請問','qǐngwèn','excuse me; may I ask'],['L1','什麼','shénme','what'],['L1','名字','míngzi','name'],
+ ['L1','呢','ne','particle (What about …?)'],['L1','印尼','Yìnní','Indonesia'],['L1','喜歡','xǐhuān','to like'],['L1','大家','dàjiā','everyone'],
+ ['L1','朋友','péngyǒu','friend'],['L1','愛','ài','to love'],['L1','吃','chī','to eat'],['L1','水果','shuǐguǒ','fruit'],['L1','水','shuǐ','water'],
+ ['L1','喝','hē','to drink'],['L1','茶','chá','tea'],['L1','謝謝','xièxie','thank you'],['L1','不客氣','búkèqì','you’re welcome'],
+ ['L1','珍珠奶茶','zhēnzhūnǎichá','bubble tea']
+].map(([l,h,p,e])=>({l,h,p,e,old:true}));
+/* 最後兩天各複習哪些舊詞（第 5 天、第 6 天） */
+const OLD_REVIEW = [
+ ['名字','哪','國','漂亮','喜歡','朋友','珍珠奶茶','日本','印尼','新'],
+ ['姓','誰','同學','不客氣','謝謝','請問','吃','水果','中國','太太']
+];
+
+/* ================= 每天的內容 =================
+   選擇題：[題目, 正確答案, 錯1, 錯2, 錯3]
+   重組：{g:語法點, t:[詞塊], a:[可接受的答案], end:標點} */
+const DAYS = [
+ /* Day 1 時間 */
+ { fill:[['現在＿＿點？','幾','什麼','誰','哪'],['現在九點十＿＿。','分','人','國','名字'],['請問，＿＿幾點？','現在','什麼','名字','朋友'],
+         ['十二點是＿＿。','中午','早上','下午','先生'],['王先生＿＿三點喝珍珠奶茶。','下午','幾','分','什麼']],
+   order:[{g:'幾點',t:['現在','幾','點'],a:['現在幾點'],end:'？'},
+          {g:'Time',t:['現在','早上','八點','十分'],a:['現在早上八點十分'],end:'。'},
+          {g:'Time + V',t:['我','中午','十二點','吃水果'],a:['我中午十二點吃水果','中午十二點我吃水果'],end:'。'}],
+   reading:{text:'李小姐早上七點喝茶，中午十二點吃水果。下午四點，她喝珍珠奶茶。她很喜歡珍珠奶茶。',
+     qs:[['李小姐幾點喝茶？','早上七點','中午十二點','下午四點','下午七點'],['李小姐下午喝什麼？','珍珠奶茶','茶','水','水果']]},
+   listen:{text:'王先生：請問，現在幾點？李小姐：現在上午十點二十分。王先生：謝謝！李小姐：不客氣。',
+     qs:[['現在幾點？','上午十點二十分','上午十二點十分','下午十點二十分','上午十點十二分'],['誰問現在幾點？','王先生','李小姐','王太太','李先生']]},
+   speak:{lines:['請問，現在幾點？','現在早上八點十分。'],ask:'現在幾點？'} },
+
+ /* Day 2 日期 */
+ { fill:[['今天星期＿＿？','幾','什麼','誰','哪'],['今天是十一月二十＿＿。','號','分','人','國'],['今天星期＿＿，我沒有課。','日','號','月','分'],
+         ['我今天＿＿有課。','沒','有','是','很'],['我星期一下午有＿＿。','課','號','月','星期']],
+   order:[{g:'星期幾',t:['今天','星期','幾'],a:['今天星期幾'],end:'？'},
+          {g:'Date',t:['今天','是','十一月','二十號'],a:['今天是十一月二十號'],end:'。'},
+          {g:'沒有',t:['我','星期日','沒有','課'],a:['我星期日沒有課','星期日我沒有課'],end:'。'}],
+   reading:{text:'今天是三月四號，星期五。王先生早上有課，下午沒有課。下午三點，他喝珍珠奶茶。',
+     qs:[['今天星期幾？','星期五','星期四','星期三','星期日'],['王先生下午有課嗎？','沒有課','有課','他下午喝茶','他下午三點有課']]},
+   listen:{text:'A：請問，今天幾月幾號？B：今天九月十號，星期二。A：謝謝！',
+     qs:[['今天幾月幾號？','九月十號','十月九號','九月二號','十月十號'],['今天星期幾？','星期二','星期三','星期四','星期日']]},
+   speak:{lines:['今天星期幾？','我星期日沒有課。'],ask:'今天幾月幾號？星期幾？'} },
+
+ /* Day 3 去哪裡 */
+ { fill:[['我早上八點＿＿學校。','去','有','是','叫'],['下午三點下課，我＿＿。','回家','上課','學校','圖書館'],['王小姐去＿＿上課。','學校','回家','下課','星期'],
+         ['九點上課，十二點＿＿。','下課','上課','回家','學校'],['我同學下午去＿＿。','圖書館','回家','下課','星期']],
+   order:[{g:'去 + Place',t:['我','早上','去','學校'],a:['我早上去學校','早上我去學校'],end:'。'},
+          {g:'Time + V',t:['他','下午四點','回家'],a:['他下午四點回家','下午四點他回家'],end:'。'},
+          {g:'幾點',t:['你','幾點','上課'],a:['你幾點上課'],end:'？'}],
+   reading:{text:'我叫安娜，我是印尼人。我星期一早上九點上課，十二點下課。下課，我去圖書館。下午四點，我回家。',
+     qs:[['安娜幾點下課？','十二點','九點','四點','十點'],['安娜下午四點＿＿。','回家','上課','去學校','去圖書館']]},
+   listen:{text:'A：你幾點上課？B：我八點十分上課。A：你幾點下課？B：我中午十二點下課。下課，我回家吃水果。',
+     qs:[['他幾點上課？','八點十分','十點八分','八點','十二點'],['下課，他＿＿。','回家吃水果','去圖書館','去學校','喝茶']]},
+   speak:{lines:['我早上八點去學校。','下課，我去圖書館。'],ask:'你幾點上課？幾點回家？'} },
+
+ /* Day 4 家人 */
+ { fill:[['她是我＿＿，她很漂亮。','媽媽','爸爸','先生','學校'],['我＿＿姓王，他是台灣人。','爸爸','媽媽','太太','小姐'],['我愛我＿＿。','家人','學校','下課','星期'],
+         ['我下午五點回＿＿。','家','號','課','月'],['王太太有＿＿嗎？','孩子','號','分','幾']],
+   order:[{g:'誰',t:['她','是','誰'],a:['她是誰'],end:'？'},
+          {g:'姓',t:['我','媽媽','姓','李'],a:['我媽媽姓李'],end:'。'},
+          {g:'Time + V',t:['爸爸','下午五點','回家'],a:['爸爸下午五點回家','下午五點爸爸回家'],end:'。'}],
+   reading:{text:'我叫大衛，我是美國人。我爸爸姓王，他是台灣人。我媽媽是美國人，她很漂亮。我很愛我家人。',
+     qs:[['大衛爸爸是哪國人？','台灣人','美國人','日本人','英國人'],['大衛媽媽＿＿。','很漂亮','是台灣人','是日本人','是英國人']]},
+   listen:{text:'A：請問，她是誰？B：她是我媽媽，她姓陳。A：你媽媽很漂亮！B：謝謝！',
+     qs:[['她是誰？','他媽媽','他太太','他同學','他孩子'],['他媽媽姓什麼？','陳','王','李','林']]},
+   speak:{lines:['我爸爸姓王，我媽媽姓李。','我很愛我家人。'],ask:'你爸爸、媽媽是哪國人？'} },
+
+ /* Day 5 綜合（新＋舊） */
+ { fill:[['請問，你叫什麼＿＿？','名字','國','星期','家'],['今天星期一，我早上＿＿課。','有','是','叫','姓'],['現在下午四點，我＿＿家。','回','喝','吃','叫'],
+         ['她是日本人，她很＿＿。','漂亮','什麼','誰','幾'],['我很喜歡喝＿＿。','珍珠奶茶','水果','圖書館','學校']],
+   order:[{g:'哪國人',t:['你','是','哪','國人'],a:['你是哪國人'],end:'？'},
+          {g:'沒有',t:['我','星期三','下午','沒有','課'],a:['我星期三下午沒有課','星期三下午我沒有課'],end:'。'},
+          {g:'去 + Place',t:['我同學','中午','去','圖書館'],a:['我同學中午去圖書館','中午我同學去圖書館'],end:'。'}],
+   reading:{text:'大家好，我叫林美美，我是台灣人。今天星期六，我沒有課。上午十點，我去朋友家。我朋友是日本人，她很喜歡喝珍珠奶茶。下午五點，我回家。',
+     qs:[['林美美今天有課嗎？','沒有課','有課','上午有課','下午有課'],['她朋友是哪國人？','日本人','台灣人','中國人','印尼人']]},
+   listen:{text:'A：請問，你是新同學嗎？B：是，我叫大衛，我是英國人。A：你好！你幾點上課？B：我九點上課。',
+     qs:[['大衛是哪國人？','英國人','美國人','中國人','日本人'],['大衛幾點上課？','九點','十點','八點','九點十分']]},
+   speak:{lines:['你好，我叫安娜，我是印尼人。','我星期一早上九點上課。'],ask:'你叫什麼名字？你今天有課嗎？'} },
+
+ /* Day 6 綜合（新＋舊） */
+ { fill:[['「請問，你＿＿什麼？」「我姓王。」','姓','叫','是','有'],['王小姐是我＿＿，她很喜歡吃水果。','朋友','學校','星期','號'],['今天十月十＿＿，星期五。','號','點','分','國'],
+         ['他早上七點去＿＿，下午三點下課。','學校','回家','家人','水果'],['「謝謝！」「＿＿。」','不客氣','你好','請問','謝謝']],
+   order:[{g:'幾點',t:['請問，','現在','幾','點'],a:['請問，現在幾點'],end:'？'},
+          {g:'很喜歡',t:['我','很','喜歡','吃水果'],a:['我很喜歡吃水果'],end:'。'},
+          {g:'去 + Place',t:['我媽媽','星期日','去','圖書館'],a:['我媽媽星期日去圖書館','星期日我媽媽去圖書館'],end:'。'}],
+   reading:{text:'王先生是台灣人，王太太是日本人。今天是星期日，王先生沒有課，他早上去圖書館。中午十二點，他回家吃水果。',
+     qs:[['王太太是哪國人？','日本人','台灣人','美國人','中國人'],['王先生幾點回家？','中午十二點','早上十點','下午五點','上午九點']]},
+   listen:{text:'A：請問，她是誰？B：她是我同學，她叫李小美，她是中國人。A：她喜歡喝什麼？B：她喜歡喝茶。',
+     qs:[['李小美是誰？','他同學','他媽媽','他太太','他孩子'],['李小美喜歡喝什麼？','茶','水','珍珠奶茶','水果']]},
+   speak:{lines:['我很喜歡喝珍珠奶茶。','我下午五點回家。'],ask:'你家人是哪國人？你幾點回家？'} }
+];
+
+/* ================= 工具 ================= */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const STEP_NAMES = ['Vocabulary Quiz','Multiple Choice','Sentence Order','Reading','Listening','Recording'];
+const BAR_NAMES = ['Flashcards'].concat(STEP_NAMES);
+const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function rng(seedStr){let h=2166136261;for(const c of seedStr){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return()=>{h+=0x6D2B79F5;let t=h;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function dateOf(i){const [y,m,d]=CONFIG.START_DATE.split('-').map(Number);const t=new Date(Date.UTC(y,m-1,d+i));return{iso:t.toISOString().slice(0,10),label:`${WD[t.getUTCDay()]} ${t.getUTCMonth()+1}/${t.getUTCDate()}`,short:`${t.getUTCMonth()+1}/${t.getUTCDate()}`}}
+function dayIndexNow(){
+  const shifted=new Date(Date.now()+8*3600e3-CONFIG.SWITCH_HOUR*3600e3);
+  const today=Date.UTC(shifted.getUTCFullYear(),shifted.getUTCMonth(),shifted.getUTCDate());
+  const [y,m,d]=CONFIG.START_DATE.split('-').map(Number);
+  return Math.round((today-Date.UTC(y,m-1,d))/86400e3);
+}
+const COUNT = {vocab:10, oldReview:5, fill:5, nums:2, order:3, reading:2, listen:2, read:2};   // 每部分題數
+function isReview(){return S.day>=DAYS.length-2}
+function oldSetToday(){const list=OLD_REVIEW[S.day-(DAYS.length-2)]||[];return list.map(h=>OLD_VOCAB.find(o=>o.h===h)).filter(Boolean)}
+const PREVIEW = !CONFIG.API_URL || location.hash==='#preview';
+const TEST = !PREVIEW && location.hash==='#test';   // 老師測試：可選日期，真的送出
+
+let voice=null;
+function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>/zh[-_]TW/i.test(v.lang))||vs.find(v=>/^zh/i.test(v.lang))||null}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function speak(text,rate=0.85){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u);
+}
+
+/* ================= 狀態 ================= */
+const S={name:store.get('pr_name')||'',day:0,step:-1,cards:false,results:[],recs:{}};
+
+function header(){
+  $('#brand').textContent=`Modern Chinese ${CONFIG.LESSON} · ${dateOf(S.day).label}`;
+  $('#who').textContent=S.name||'';
+  const show=S.cards||(S.step>=0&&S.step<=5);
+  const pos=S.cards?0:S.step+1;
+  const st=$('#steps');st.hidden=!show;
+  [...st.children].forEach((el,i)=>{el.className=i<pos?'done':i===pos?'now':''});
+  $('#stepName').textContent=show?`Step ${pos+1} of 7 · ${BAR_NAMES[pos]}`:'';
+}
+function teacherBar(){
+  const t=$('#teacher');if(!PREVIEW&&!TEST){t.hidden=true;return}
+  t.hidden=false;
+  t.innerHTML=(TEST?'<span>老師測試（會真的送出，請選「老師測試」）</span>':'<span>Teacher preview (nothing is submitted)</span>')+DAYS.map((_,i)=>`<button type="button" data-d="${i}" class="${i===S.day?'on':''}">${dateOf(i).short}</button>`).join('');
+  t.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.day=+b.dataset.d;S.results=[];S.recs={};teacherBar();renderCards()});
+}
+
+/* ================= 登入 ================= */
+function renderLogin(){
+  S.step=-1;S.cards=false;header();
+  const opts=STUDENTS.map(n=>`<option value="${esc(n)}" ${n===S.name?'selected':''}>${esc(n)}</option>`).join('');
+  app.innerHTML=`<h1>Quiz for ${dateOf(S.day).label}</h1><p class="sub">Vocabulary Quiz → Multiple Choice → Sentence Order → Reading → Listening → Recording.</p>
+  <form class="panel stack" id="f">
+    <label for="sel">1. Choose your name</label>
+    <select id="sel"><option value="">— Select —</option>${opts}</select>
+    <label for="typed">2. Type your name again</label>
+    <input id="typed" type="text" autocomplete="off" placeholder="e.g. ${esc(STUDENTS[0])}">
+    <div class="err" id="err"></div>
+    <button class="btn" type="submit">Start the quiz</button>
+    <button class="btn ghost" type="button" id="backCards">← Back to flashcards</button>
+  </form>
+  <p class="note">Open this page in Chrome or Safari, not inside LINE or Messenger, so recording works.</p>`;
+  $('#backCards').onclick=()=>renderCards();
+  $('#f').onsubmit=async e=>{
+    e.preventDefault();
+    const a=$('#sel').value,b=$('#typed').value.trim();
+    if(!a){$('#err').textContent='Please choose your name.';return}
+    if(a!==b){$('#err').textContent='The two names do not match. Please check again.';return}
+    S.name=a;store.set('pr_name',a);
+    if(!PREVIEW){
+      try{const r=await fetch(`${CONFIG.API_URL}?action=week&name=${encodeURIComponent(a)}`);const j=await r.json();
+        if((j.dates||[]).includes(dateOf(S.day).iso)){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(j.dates)}</div>`;return}}catch(err){}
+    }
+    S.results=[];S.recs={};
+    runQuiz(0,vocabQs());
+  };
+}
+
+/* ================= 0. 字卡（不計分） ================= */
+function renderCards(){
+  S.cards=true;S.step=-1;header();
+  const d=S.day+1, review=isReview();
+  const todays=review?VOCAB.concat(oldSetToday()):VOCAB.filter(v=>v.d===d);
+  const allSoFar=VOCAB.filter(v=>v.d<=d);
+  let set=todays, order=set.slice(), i=0, mode='card';
+  function paint(){
+    const w=order[i];
+    const setBtns=`<div class="grp"><button class="chip ${set===todays?'on':''}" data-set="t" type="button">${review?'This lesson':'Today'}</button>${(!review&&d>1)?`<button class="chip ${set===allSoFar?'on':''}" data-set="a" type="button">All so far</button>`:''}</div>`;
+    let body;
+    if(mode==='card'){
+      body=`<div class="count">Card ${i+1} of ${order.length}</div>
+      <div class="flip" id="flip"><div class="flip-inner">
+        <div class="face front">${w.old?`<span class="tag" style="position:absolute;top:12px;left:12px">${w.l}</span>`:''}<button class="c-say" type="button" data-say>🔊</button><div class="c-han">${esc(w.h)}</div><div class="c-hint">Tap to flip</div></div>
+        <div class="face back"><button class="c-say" type="button" data-say>🔊</button><div class="c-han">${esc(w.h)}</div><div class="c-py">${esc(w.p)}</div><div class="c-en">${esc(w.e)}</div></div>
+      </div></div>
+      <div class="row2"><button class="btn ghost" id="pv" type="button" ${i===0?'disabled':''}>← Back</button><button class="btn ghost" id="nx" type="button" ${i===order.length-1?'disabled':''}>Next →</button></div>`;
+    }else{
+      body=`<div class="count">${order.length} words</div><div class="panel" style="padding:8px 14px"><table class="vlist">${order.map((v,k)=>`<tr><td class="h">${esc(v.h)}${v.old?` <span class="tag">${v.l}</span>`:''}</td><td><div class="p">${esc(v.p)}</div><div class="e">${esc(v.e)}</div></td><td style="text-align:right"><button type="button" data-k="${k}">🔊</button></td></tr>`).join('')}</table></div>`;
+    }
+    app.innerHTML=`<h1>Flashcards</h1><p class="sub">${review?`Review all of ${CONFIG.LESSON} and some words from earlier lessons.`:'Review today’s new words.'} This part is not scored.</p>
+    <div class="cardbar">${setBtns}<div class="grp"><button class="chip" id="shf" type="button">Shuffle</button><button class="chip" id="mode" type="button">${mode==='card'?'List':'Cards'}</button></div></div>
+    ${body}
+    <div style="margin-top:22px"><button class="btn" id="go" type="button">I’m ready · Start the quiz</button></div>`;
+    app.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{set={t:todays,a:allSoFar}[b.dataset.set];order=set.slice();i=0;paint()});
+    $('#shf').onclick=()=>{order=shuffle(set,Math.random);i=0;paint()};
+    $('#mode').onclick=()=>{mode=mode==='card'?'list':'card';paint()};
+    $('#go').onclick=()=>{S.cards=false;document.onkeydown=null;renderLogin()};
+    if(mode==='card'){
+      $('#flip').onclick=e=>{if(e.target.closest('[data-say]')){speak(w.h,0.75);return}$('#flip').classList.toggle('turned')};
+      $('#pv').onclick=()=>{if(i>0){i--;paint()}};
+      $('#nx').onclick=()=>{if(i<order.length-1){i++;paint()}};
+    }else{
+      app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>speak(order[+b.dataset.k].h,0.75));
+    }
+  }
+  document.onkeydown=e=>{
+    if(!S.cards||mode!=='card')return;
+    if(e.key==='ArrowRight'&&i<order.length-1){i++;paint()}
+    else if(e.key==='ArrowLeft'&&i>0){i--;paint()}
+    else if(e.key===' '&&e.target===document.body){e.preventDefault();const f=$('#flip');if(f)f.classList.toggle('turned')}
+  };
+  paint();
+}
+
+/* ================= 1. 生詞測驗（自動出 15 題） ================= */
+function vocabQs(){
+  const r=rng(S.name+'v'+S.day), d=S.day+1;
+  const pool=VOCAB.filter(v=>v.d<=d), fresh=pool.filter(v=>v.d===d), old=pool.filter(v=>v.d<d);
+  const review=isReview();   // 最後兩天：新課＋舊課綜合
+  const oldPick=review?shuffle(oldSetToday(),r).slice(0,COUNT.oldReview):[];
+  const nNew=COUNT.vocab-oldPick.length;
+  let pick=review?shuffle(pool,r):shuffle(fresh,r).concat(shuffle(old,r));   // 先考今天的新詞，不夠再補前幾天的
+  pick=pick.slice(0,nNew);
+  while(pick.length<nNew)pick.push(fresh.length?fresh[Math.floor(r()*fresh.length)]:pool[Math.floor(r()*pool.length)]);
+  pick=pick.concat(oldPick);
+  const formats=[['h','p'],['h','e'],['a','h'],['a','e'],['a','p'],['e','h'],['p','h']];
+  const used=new Set();
+  return shuffle(pick,r).map((v,i)=>{
+    let f;for(let k=0;k<10;k++){f=formats[Math.floor(r()*formats.length)];if(!used.has(v.h+f))break}
+    used.add(v.h+f);
+    const [show,ans]=f, key={h:'h',p:'p',e:'e'}[ans];
+    const base=v.old?OLD_VOCAB.concat(pool):pool;
+    const others=shuffle(base.filter(o=>o.h!==v.h&&o[key]!==v[key]),r).concat(shuffle(VOCAB.filter(o=>o.d>d&&o[key]!==v[key]),r));
+    const wrong=[];for(const o of others){if(!wrong.includes(o[key]))wrong.push(o[key]);if(wrong.length===3)break}
+    const prompt={h:ans==='p'?'Choose the pinyin.':'Choose the meaning.',a:'Listen and choose the '+(ans==='h'?'characters':ans==='p'?'pinyin':'meaning')+'.',e:'Choose the characters.',p:'Choose the characters.'}[show];
+    return{type:'mc',sec:'生詞',q:prompt,show,word:v,ans:v[key],wrong,ansKind:ans,id:'v'+i};
+  });
+}
+
+/* ================= 共用：選擇題流程 ================= */
+function sectionQs(step){
+  const D=DAYS[S.day];
+  const mc=(q,extra)=>Object.assign({type:'mc',q:q[0],ans:q[1],wrong:q.slice(2)},extra);
+  if(step===1){const nums=(D.nums||[]).slice(0,COUNT.nums);
+    return D.fill.slice(0,COUNT.fill-nums.length).map(q=>mc(q,{sec:'填空'})).concat(nums.map(q=>({type:'mc',sec:'填空',q:'Listen and choose the number.',say:q[0],ans:q[1],wrong:q.slice(2)})));}
+  if(step===2)return D.order.slice(0,COUNT.order).map(o=>({type:'order',sec:'重組',o}));
+  if(step===3)return D.reading.qs.slice(0,COUNT.reading).map(q=>mc(q,{sec:'閱讀',passage:D.reading.text}));
+  if(step===4)return D.listen.qs.slice(0,COUNT.listen).map(q=>mc(q,{sec:'聽力',listen:D.listen.text}));
+}
+function runQuiz(step,qs){
+  S.step=step;header();
+  if(step>=1&&step<=2)qs=shuffle(qs,rng(S.name+'s'+step+S.day));
+  let i=0;
+  const next=()=>{i++;if(i<qs.length)draw();else if(step<4)runQuiz(step+1,sectionQs(step+1));else renderSpeak()};
+  function draw(){
+    const it=qs[i];
+    let head=`<h1>${STEP_NAMES[step]}</h1><div class="count">Question ${i+1} of ${qs.length}</div>`;
+    if(it.passage)head+=`<div class="passage">${esc(it.passage)}</div>`;
+    if(it.listen)head+=`<div class="play"><button class="btn" id="pl" type="button">▶ Play</button><button class="btn ghost" id="pls" type="button">▶ Slow</button></div>`;
+    if(it.type==='order')return drawOrder(it,head);
+    let stim='';
+    if(it.show==='h')stim=`<div class="qhan">${esc(it.word.h)}</div>`;
+    else if(it.show==='e')stim=`<div class="q" style="text-align:center;font-size:24px">${esc(it.word.e)}</div>`;
+    else if(it.show==='p')stim=`<div class="q" style="text-align:center;font-size:28px">${esc(it.word.p)}</div>`;
+    else if(it.show==='a'||it.say)stim=`<div class="listen-big"><button type="button" id="sayw">🔊 Play</button></div>`;
+    const opts=shuffle([it.ans,...it.wrong],rng(S.name+it.q+it.ans+i));
+    const hanOpt=it.ansKind==='h';
+    app.innerHTML=head+`<div class="panel"><div class="q">${esc(it.q)}</div>${stim}<div class="opts">${opts.map((o,k)=>`<button class="opt${hanOpt?' han':''}" type="button" data-k="${k}">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div><div id="nx"></div></div>`;
+    if(it.listen){$('#pl').onclick=()=>speak(it.listen,0.85);$('#pls').onclick=()=>speak(it.listen,0.6)}
+    if(it.show==='a'){$('#sayw').onclick=()=>speak(it.word.h,0.75);speak(it.word.h,0.75)}
+    if(it.say){$('#sayw').onclick=()=>speak(it.say,0.75);speak(it.say,0.75)}
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const pick=opts[+b.dataset.k],ok=pick===it.ans;
+      S.results.push({sec:it.sec,q:it.word?it.word.h:(it.say||it.q),pick,ok});
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true;const v=opts[+x.dataset.k];if(v===it.ans)x.classList.add('ok');else if(x===b)x.classList.add('bad')});
+      let fb=ok?'Correct!':'Answer: '+it.ans;
+      if(it.word)fb+=`　${it.word.h}・${it.word.p}・${it.word.e}`;
+      if(it.say)fb+=`　（${it.say}）`;
+      $('#fb').className='fb '+(ok?'ok':'bad');$('#fb').textContent=fb;
+      if(it.listen&&i===qs.length-1)$('#fb').insertAdjacentHTML('afterend',`<p class="note">Transcript: ${esc(it.listen)}</p>`);
+      $('#nx').innerHTML='<button class="btn" type="button" style="margin-top:14px">Next</button>';$('#nx').firstChild.onclick=next;
+    });
+  }
+  function drawOrder(it,head){
+    const o=it.o;
+    const pool=shuffle(o.t.map((t,k)=>({t,k})),rng(S.name+o.t.join('')));
+    let picked=[];
+    function paint(){
+      const left=pool.filter(p=>!picked.includes(p));
+      app.innerHTML=head+`<div class="panel"><span class="tag">Grammar: ${esc(o.g)}</span><div class="q">Tap the words to make a correct sentence.</div>
+      <div class="answer"><div class="tiles">${picked.map((p,k)=>`<button class="tile" data-a="${k}" type="button">${esc(p.t)}</button>`).join('')}</div></div>
+      <div class="tiles">${left.map(p=>`<button class="tile" data-p="${p.k}" type="button">${esc(p.t)}</button>`).join('')}</div>
+      <div class="fb" id="fb"></div><div id="nx"><button class="btn" id="chk" type="button" style="margin-top:14px" ${left.length?'disabled':''}>Check</button></div></div>`;
+      app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{picked.push(pool.find(p=>p.k===+b.dataset.p));paint()});
+      app.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{picked.splice(+b.dataset.a,1);paint()});
+      $('#chk').onclick=()=>{
+        const s=picked.map(p=>p.t).join(''),ok=o.a.includes(s);
+        S.results.push({sec:'重組',q:o.g,pick:s,ok});
+        app.querySelectorAll('.tile').forEach(x=>x.disabled=true);
+        $('#fb').className='fb '+(ok?'ok':'bad');$('#fb').textContent=ok?'Correct!':'Answer: '+o.a[0]+o.end;
+        $('#nx').innerHTML='<button class="btn" type="button" style="margin-top:14px">Next</button>';$('#nx').firstChild.onclick=next;
+      };
+    }
+    paint();
+  }
+  draw();
+}
+
+/* ================= 6. 錄音：朗讀 3 句＋回答 1 題 ================= */
+function renderSpeak(){
+  S.step=5;header();
+  const sp=DAYS[S.day].speak;
+  const items=sp.lines.slice(0,COUNT.read).map((l,k)=>({id:'read'+(k+1),label:`Read aloud ${k+1}`,text:l})).concat([{id:'answer',label:'Answer the question',text:sp.ask,ask:true}]);
+  app.innerHTML=`<h1>Recording</h1><p class="sub">Record each item separately. You can listen and re-record. Submit opens after all ${items.length} are recorded.</p>
+  <div class="panel">${items.map(it=>`<div class="recitem" id="ri-${it.id}"><span class="tag">${it.label}</span><div class="sent">${it.ask?'<span class="note">Answer in Chinese:</span><br>':''}${esc(it.text)}</div><div class="rbar" id="rb-${it.id}"></div></div>`).join('')}</div>
+  <div style="margin-top:16px"><button class="btn" id="send" type="button" disabled>Submit</button>${PREVIEW?'<p class="note">Teacher preview: you can submit without recording to see the results page.</p>':''}<div class="err" id="err"></div></div>`;
+  let active=null;
+  const MIN_SEC=1.5, MIN_LEVEL=0.02, MIN_BYTES=2000;
+  S.meta=S.meta||{};
+  const canMic=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
+  function refresh(){$('#send').disabled=!PREVIEW&&!items.every(it=>S.recs[it.id])}
+  function idle(it){
+    const box=$('#rb-'+it.id),done=S.recs[it.id];
+    if(done){
+      box.innerHTML=`<audio controls src="${URL.createObjectURL(done)}"></audio><span class="okmark">✓ Recorded</span><button class="small" type="button" data-re>Re-record</button>`;
+      box.querySelector('[data-re]').onclick=()=>{delete S.recs[it.id];delete S.meta[it.id];refresh();idle(it)};
+    }else{
+      const warn=it.warn?`<div class="err" style="width:100%">${it.warn}</div>`:'';
+      box.innerHTML=`<button class="recbtn" type="button" data-go>● Record</button><span class="timer">Not recorded yet</span>${warn}`;
+      box.querySelector('[data-go]').onclick=()=>start(it);
+    }
+    refresh();
+  }
+  async function start(it){
+    if(active)return;
+    if(!canMic)return fallback(it);
+    let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){return fallback(it)}
+    const type=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+    let mr;try{mr=new MediaRecorder(stream,type?{mimeType:type}:undefined)}catch(e){stream.getTracks().forEach(t=>t.stop());return fallback(it)}
+    const chunks=[];active=mr;
+    mr.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+    const box=$('#rb-'+it.id);const t0=Date.now();
+    box.innerHTML=`<button class="recbtn stop" type="button" data-st>■ Stop</button><span class="timer">0:00</span><span class="meter"><i></i></span>`;
+    const tm=box.querySelector('.timer'), bar=box.querySelector('.meter i');
+    // 即時音量：確認真的有聲音
+    let ac=null,an=null,data=null,maxLevel=null;
+    try{const AC=window.AudioContext||window.webkitAudioContext;ac=new AC();an=ac.createAnalyser();an.fftSize=1024;ac.createMediaStreamSource(stream).connect(an);data=new Float32Array(an.fftSize);maxLevel=0}catch(e){ac=null}
+    const tick=setInterval(()=>{
+      const s=Math.floor((Date.now()-t0)/1000);tm.textContent=`Recording ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+      if(an){an.getFloatTimeDomainData(data);let sum=0;for(let k=0;k<data.length;k++)sum+=data[k]*data[k];const rms=Math.sqrt(sum/data.length);if(rms>maxLevel)maxLevel=rms;bar.style.width=Math.min(100,rms*400)+'%'}
+      if(s>=90)mr.stop()},100);
+    mr.onstop=()=>{
+      clearInterval(tick);stream.getTracks().forEach(t=>t.stop());active=null;
+      try{ac&&ac.close()}catch(e){}
+      const blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'}), dur=(Date.now()-t0)/1000;
+      it.warn='';
+      if(dur<MIN_SEC||blob.size<MIN_BYTES)it.warn='Too short. Please record again.';
+      else if(maxLevel!==null&&maxLevel<MIN_LEVEL)it.warn='We could not hear your voice. Check your microphone and record again.';
+      if(it.warn){idle(it);return}
+      S.recs[it.id]=blob;S.meta[it.id]={dur:Math.round(dur*10)/10,level:maxLevel===null?null:Math.round(maxLevel*1000)/1000};idle(it)};
+    box.querySelector('[data-st]').onclick=()=>mr.stop();
+    mr.start();
+  }
+  function fallback(it){
+    const box=$('#rb-'+it.id);
+    box.innerHTML=`<span class="note">Recording is not available here. Record on your phone first, then choose the file:</span><input type="file" accept="audio/*" capture id="file-${it.id}" aria-label="Choose a recording">`;
+    box.querySelector('input').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+      const m=await analyzeFile(f);
+      if(f.size<MIN_BYTES||(m&&m.dur<MIN_SEC)){it.warn='Too short. Please record again.';idle(it);return}
+      if(m&&m.level<MIN_LEVEL){it.warn='We could not hear your voice. Please record again.';idle(it);return}
+      it.warn='';S.recs[it.id]=f;S.meta[it.id]=m||{dur:null,level:null};idle(it)};
+  }
+  items.forEach(idle);
+  $('#send').onclick=()=>submit(items);
+}
+
+async function analyzeFile(blob){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+    const ac=new AC();const buf=await blob.arrayBuffer();
+    const au=await new Promise((res,rej)=>{const p=ac.decodeAudioData(buf,res,rej);if(p&&p.then)p.then(res,rej)});
+    const ch=au.getChannelData(0),win=Math.max(1,Math.floor(au.sampleRate*0.05));let max=0;
+    for(let i=0;i<ch.length;i+=win){let s=0,n=0;for(let k=i;k<Math.min(i+win,ch.length);k++){s+=ch[k]*ch[k];n++}const r=Math.sqrt(s/n);if(r>max)max=r}
+    try{ac.close()}catch(e){}
+    return{dur:Math.round(au.duration*10)/10,level:Math.round(max*1000)/1000};
+  }catch(e){return null}
+}
+function toB64(blob){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob)})}
+async function submit(items){
+  const btn=$('#send');btn.disabled=true;btn.textContent='Submitting…';
+  const score=S.results.filter(r=>r.ok).length,total=S.results.length;
+  const score100=total?Math.round(score/total*100):0;
+  if(PREVIEW){return renderDone(score,total,null)}
+  try{
+    const audios=[];for(const it of items){const b=S.recs[it.id];const m=(S.meta&&S.meta[it.id])||{};audios.push({label:it.label,b64:await toB64(b),mime:b.type||'audio/mpeg',dur:m.dur??null,level:m.level??null,size:b.size})}
+    const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,score:score100,correct:score,total,results:S.results,audios});
+    const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+    const j=await r.json();if(!j.ok)throw new Error(j.error||'error');
+    renderDone(score,total,j.dates||[dateOf(S.day).iso]);
+  }catch(e){
+    btn.disabled=false;btn.textContent='Try again';
+    $('#err').textContent='Not sent. Check your internet connection and try again.';
+  }
+}
+
+/* ================= 完成＋本週繳交紀錄 ================= */
+function weekHTML(dates){
+  const done=new Set(dates||[]);const today=S.day;let n=0;
+  const cells=DAYS.map((_,i)=>{const d=dateOf(i);const y=done.has(d.iso);if(y)n++;
+    const cls=y?'y':i<today?'n':'';const mark=y?'1':i<today?'0':'–';
+    return`<div class="${cls}">${d.short}<b>${mark}</b></div>`}).join('');
+  const past=Math.min(today+1,DAYS.length);
+  return`<h2 style="font-size:18px;margin:18px 0 0">This week</h2><p class="note" style="margin:4px 0 0">1 = submitted, 0 = missed. So far: ${n} submitted, ${past-n} missed.</p><div class="week">${cells}</div>`;
+}
+function renderDone(score,total,dates){
+  S.step=6;header();
+  const secs=['生詞','填空','重組','閱讀','聽力'].map(s=>{const rs=S.results.filter(r=>r.sec===s);return`<tr><td>${{生詞:'Vocabulary Quiz',填空:'Multiple Choice',重組:'Sentence Order',閱讀:'Reading',聽力:'Listening'}[s]}</td><td>${rs.filter(r=>r.ok).length} / ${rs.length}</td></tr>`}).join('');
+  const preview=dates===null;
+  if(preview){dates=[];for(let i=0;i<=S.day;i++)if(i!==1)dates.push(dateOf(i).iso)}
+  app.innerHTML=`<h1>Done for today!</h1><div class="panel"><div class="score">${total?Math.round(score/total*100):0} 分</div><p class="note" style="text-align:center;margin:0 0 8px">${score} / ${total} correct</p>
+  <table class="res">${secs}<tr><td>Recording</td><td>${Object.keys(S.recs).length} submitted</td></tr></table>
+  ${weekHTML(dates)}
+  ${preview?'<p class="note">Teacher preview: this week’s record is sample data (day 2 marked as missed). Nothing was submitted.</p>':''}
+  <p class="note">New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m. See you tomorrow.</p></div>`;
+}
+
+/* ================= 開始 ================= */
+(function boot(){
+  const idx=dayIndexNow();
+  if(PREVIEW||TEST){S.day=Math.min(Math.max(idx,0),DAYS.length-1);teacherBar();renderCards();return}
+  if(idx<0){S.day=0;header();app.innerHTML=`<h1>Practice has not started yet</h1><div class="panel"><p>The first day is ${dateOf(0).label} at ${CONFIG.SWITCH_HOUR}:00 a.m.</p></div>`;return}
+  if(idx>=DAYS.length){S.day=DAYS.length-1;header();app.innerHTML=`<h1>This lesson’s practice has ended</h1><div class="panel"><p>Your teacher will share the next lesson soon.</p></div>`;return}
+  S.day=idx;renderCards();
+})();
+</script>
+</body>
+</html>
