@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>時代華語每日練習（字卡版）</title>
+<title>華語班 每日練習</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
 <style>
@@ -55,7 +55,7 @@ select,input[type=text]{width:100%;font:inherit;padding:12px;border:1px solid va
 .count{font-size:14px;color:var(--muted);margin:0 0 10px;font-variant-numeric:tabular-nums}
 
 /* 字卡 */
-.cardbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.cardbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .cardbar .grp{display:flex;gap:6px}
 .chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
 .chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
@@ -66,7 +66,9 @@ select,input[type=text]{width:100%;font:inherit;padding:12px;border:1px solid va
   border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 .face.back{transform:rotateY(180deg)}
 .c-han{font-family:var(--f-han);font-size:76px;font-weight:700;line-height:1.15}
+.c-han.s{font-size:30px;line-height:1.5}
 .back .c-han{font-size:40px;margin-bottom:8px}
+.back .c-han.s{font-size:24px}
 .c-py{font-size:30px;color:var(--accent);margin-bottom:4px}
 .c-en{font-size:21px;color:var(--muted)}
 .c-hint{position:absolute;bottom:12px;font-size:13px;color:var(--muted)}
@@ -74,18 +76,20 @@ select,input[type=text]{width:100%;font:inherit;padding:12px;border:1px solid va
 table.vlist{width:100%;border-collapse:collapse}
 .vlist td{padding:10px 4px;border-bottom:1px solid var(--line);vertical-align:middle}
 .vlist tr:last-child td{border-bottom:0}
-.vlist .h{font-family:var(--f-han);font-size:24px;font-weight:700;white-space:nowrap}
+.vlist .h{font-family:var(--f-han);font-size:24px;font-weight:700}
+.vlist .h.s{font-size:19px}
 .vlist .p{color:var(--accent)}
 .vlist .e{color:var(--muted);font-size:15px}
 .vlist button{border:0;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 10px;cursor:pointer}
 
 .q{font-size:20px;font-weight:500;margin:4px 0 14px}
 .qhan{font-family:var(--f-han);font-size:56px;font-weight:700;line-height:1.2;text-align:center;margin:6px 0 16px}
+.stem{font-family:var(--f-han);font-size:26px;font-weight:700;text-align:center;margin:4px 0 16px}
 .listen-big{display:flex;justify-content:center;margin:6px 0 16px}
 .listen-big button{width:88px;height:88px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700;cursor:pointer}
 .opts{display:flex;flex-direction:column;gap:10px}
 .opt{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 14px;font-size:18px;cursor:pointer;color:var(--ink)}
-.opt.han{font-family:var(--f-han);font-size:24px;font-weight:600}
+.opt.han{font-family:var(--f-han);font-size:22px;font-weight:600}
 .opt.ok{border-color:var(--ok);background:var(--ok-soft)}
 .opt.bad{border-color:var(--bad);background:var(--bad-soft)}
 .opt:disabled{cursor:default}
@@ -93,6 +97,10 @@ table.vlist{width:100%;border-collapse:collapse}
 .fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
 .tag{display:inline-block;font-size:12px;letter-spacing:.06em;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-bottom:8px}
 .passage{font-family:var(--f-han);font-size:20px;line-height:1.9;background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.passage table{width:100%;border-collapse:collapse}
+.passage caption{font-weight:700;text-align:left;padding-bottom:6px}
+.passage td{padding:4px 6px;border-top:1px solid rgba(30,107,87,.2)}
+.passage td:first-child{font-family:var(--f-ui);font-variant-numeric:tabular-nums;white-space:nowrap;width:1%;padding-right:16px}
 .tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:48px}
 .answer{border:1.5px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:12px}
 .tile{border:1.5px solid var(--accent);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;font-size:19px;cursor:pointer;font-family:var(--f-han);font-weight:600}
@@ -138,121 +146,169 @@ table.res td:last-child{text-align:right;font-variant-numeric:tabular-nums}
 <script>
 /* ================= 設定 ================= */
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbwudpdxzQQIde83uCxUeRszUdR8OTKJMJL8kNd5rQBzl4Hs5c_OmGJag6UeV0DIuKOkmw/exec',               // Google Apps Script 網址（設定後才會真的送出）
-  START_DATE: '2026-11-20',  // 第一天的日期
+  API_URL: 'https://script.google.com/macros/s/AKfycbwudpdxzQQIde83uCxUeRszUdR8OTKJMJL8kNd5rQBzl4Hs5c_OmGJag6UeV0DIuKOkmw/exec',
+  START_DATE: '2026-11-27',  // 第一天
   SWITCH_HOUR: 6,            // 每天幾點換新內容（台灣時間）
-  LESSON: 'L2'
+  LESSON: 'L2Text'           // 後台成績表：「L2Text 成績」（跟 L2 分開）
 };
-const STUDENTS = ['丁福林','阮金芝','帕努奇','阿布杜拉','阮氏黎芳','麗提卡','宗雪山','卡拉杰','陳靖涵','高協和','林書妍','老師測試'];   // 範例名單，之後換成新班學生
+const STUDENTS = ['丁福林','阮金芝','帕努奇','阿布杜拉','阮氏黎芳','麗提卡','宗雪山','卡拉杰','陳靖涵','高協和','林書妍','老師測試'];
 
-/* ================= 新課生詞 L2（第幾天出現） ================= */
+/* ================= 第二課生詞 ================= */
 const VOCAB = [
- [1,'幾','jǐ','how many; which (number)'],[1,'點鐘','diǎnzhōng','o’clock'],[1,'分','fēn','minute'],[1,'現在','xiànzài','now'],
- [1,'早上','zǎoshàng','morning'],[1,'上午','shàngwǔ','morning (before noon)'],[1,'中午','zhōngwǔ','noon'],[1,'下午','xiàwǔ','afternoon'],
- [2,'今天','jīntiān','today'],[2,'星期','xīngqí','week; day of the week'],[2,'月','yuè','month'],[2,'號','hào','day of the month (spoken)'],
- [2,'日','rì','day of the month (written)'],[2,'有','yǒu','to have'],[2,'沒','méi','not (have)'],[2,'課','kè','class; lesson'],
- [3,'去','qù','to go'],[3,'學校','xuéxiào','school'],[3,'圖書館','túshūguǎn','library'],[3,'上課','shàngkè','to go to class'],
- [3,'下課','xiàkè','to finish class'],[3,'回家','huíjiā','to go home'],
- [4,'家','jiā','home; family'],[4,'家人','jiārén','family members'],[4,'爸爸','bàba','dad'],[4,'媽媽','māma','mom'],[4,'孩子','háizi','child']
-].map(([d,h,p,e])=>({d,h,p,e}));
+ ['幾','jǐ','how many; which (number)'],['點','diǎn','o’clock'],['分','fēn','minute'],['現在','xiànzài','now'],
+ ['早上','zǎoshàng','morning'],['上午','shàngwǔ','morning (before noon)'],['中午','zhōngwǔ','noon'],['下午','xiàwǔ','afternoon'],
+ ['今天','jīntiān','today'],['星期','xīngqí','week; day of the week'],['星期天','xīngqítiān','Sunday'],['月','yuè','month'],['號','hào','day of the month (spoken)'],
+ ['日','rì','day of the month (written)'],['有','yǒu','to have'],['沒','méi','not (have)'],['課','kè','class; lesson'],
+ ['去','qù','to go'],['學校','xuéxiào','school'],['圖書館','túshūguǎn','library'],['上課','shàngkè','to go to class'],
+ ['下課','xiàkè','to finish class'],['回家','huíjiā','to go home'],
+ ['家','jiā','home; family'],['家人','jiārén','family members'],['爸爸','bàba','dad'],['媽媽','māma','mom'],['孩子','háizi','child']
+].map(([h,p,e])=>({h,p,e,l:'L2'}));
 
-/* ================= 舊課生詞 L0、L1（只在最後兩天的字卡和生詞測驗出現） ================= */
-const OLD_VOCAB = [
- ['L0','一','yī','one'],['L0','二','èr','two'],['L0','三','sān','three'],['L0','四','sì','four'],['L0','五','wǔ','five'],
- ['L0','六','liù','six'],['L0','七','qī','seven'],['L0','八','bā','eight'],['L0','九','jiǔ','nine'],['L0','十','shí','ten'],
- ['L0','你','nǐ','you'],['L0','我','wǒ','I; me'],['L0','他','tā','he; him'],['L0','您','nín','you (polite)'],['L0','是','shì','to be'],
- ['L0','人','rén','person'],['L0','先生','xiānshēng','Mr.; husband'],['L0','小姐','xiǎojiě','Miss; Ms.'],['L0','太太','tàitai','Mrs.; wife'],
- ['L1','新','xīn','new'],['L1','同學','tóngxué','classmate'],['L1','她','tā','she; her'],['L1','誰','shéi','who'],['L1','叫','jiào','to be called'],
- ['L1','姓','xìng','to be surnamed'],['L1','很','hěn','very'],['L1','哪','nǎ','which'],['L1','國','guó','country'],['L1','妳','nǐ','you (female)'],
- ['L1','知道','zhīdào','to know'],['L1','嗎','ma','question particle'],['L1','日本','Rìběn','Japan'],['L1','台灣','Táiwān','Taiwan'],
- ['L1','中國','Zhōngguó','China'],['L1','美國','Měiguó','the United States'],['L1','英國','Yīngguó','the United Kingdom'],['L1','漂亮','piàoliàng','pretty'],
- ['L1','你好','nǐhǎo','hello'],['L1','請問','qǐngwèn','excuse me; may I ask'],['L1','什麼','shénme','what'],['L1','名字','míngzi','name'],
- ['L1','呢','ne','particle (What about …?)'],['L1','印尼','Yìnní','Indonesia'],['L1','喜歡','xǐhuān','to like'],['L1','大家','dàjiā','everyone'],
- ['L1','朋友','péngyǒu','friend'],['L1','愛','ài','to love'],['L1','吃','chī','to eat'],['L1','水果','shuǐguǒ','fruit'],['L1','水','shuǐ','water'],
- ['L1','喝','hē','to drink'],['L1','茶','chá','tea'],['L1','謝謝','xièxie','thank you'],['L1','不客氣','búkèqì','you’re welcome'],
- ['L1','珍珠奶茶','zhēnzhūnǎichá','bubble tea']
-].map(([l,h,p,e])=>({l,h,p,e,old:true}));
-/* 最後兩天各複習哪些舊詞（第 5 天、第 6 天） */
-const OLD_REVIEW = [
- ['名字','哪','國','漂亮','喜歡','朋友','珍珠奶茶','日本','印尼','新'],
- ['姓','誰','同學','不客氣','謝謝','請問','吃','水果','中國','太太']
-];
+/* ================= 第一課生詞（當天內容有出現的才放進字卡） ================= */
+const L1 = [
+ ['新','xīn','new'],['同學','tóngxué','classmate'],['她','tā','she; her'],['誰','shéi','who'],['叫','jiào','to be called'],
+ ['姓','xìng','to be surnamed'],['很','hěn','very'],['哪','nǎ','which'],['國','guó','country'],['妳','nǐ','you (female)'],
+ ['知道','zhīdào','to know'],['嗎','ma','question particle'],['日本','Rìběn','Japan'],['台灣','Táiwān','Taiwan'],
+ ['中國','Zhōngguó','China'],['美國','Měiguó','the United States'],['英國','Yīngguó','the United Kingdom'],['漂亮','piàoliàng','pretty'],
+ ['你好','nǐhǎo','hello'],['請問','qǐngwèn','excuse me; may I ask'],['什麼','shénme','what'],['名字','míngzi','name'],
+ ['呢','ne','particle (What about …?)'],['印尼','Yìnní','Indonesia'],['喜歡','xǐhuān','to like'],['大家','dàjiā','everyone'],
+ ['朋友','péngyǒu','friend'],['愛','ài','to love'],['吃','chī','to eat'],['水果','shuǐguǒ','fruit'],['水','shuǐ','water'],
+ ['喝','hē','to drink'],['茶','chá','tea'],['謝謝','xièxie','thank you'],['不客氣','búkèqì','you’re welcome'],
+ ['珍珠奶茶','zhēnzhūnǎichá','bubble tea']
+].map(([h,p,e])=>({h,p,e,l:'L1'}));
 
 /* ================= 每天的內容 =================
-   選擇題：[題目, 正確答案, 錯1, 錯2, 錯3]
-   重組：{g:語法點, t:[詞塊], a:[可接受的答案], end:標點} */
+   phr / l1s：聽了選看到的（[聽到的, 錯1, 錯2, 錯3]）
+   mc：['c'=Choose the correct sentence. / 'b'=Choose the best answer., 題幹, 正確, 錯1, 錯2, 錯3]
+   order：{g:語法點, t:[詞塊], a:[可接受的答案], end:標點}
+   reading：{text 或 table:{cap, rows}, qs:[[問題, 正確, 錯…]]}
+   listen：{qs:[[聽到的問題, 正確回答, 錯…]]} 或 {text:短文, qs:[[問題, 正確, 錯…]]}
+   sents：句子字卡 [中文, English] */
 const DAYS = [
- /* Day 1 時間 */
- { fill:[['現在＿＿點？','幾','什麼','誰','哪'],['現在九點十＿＿。','分','人','國','名字'],['請問，＿＿幾點？','現在','什麼','名字','朋友'],
-         ['十二點是＿＿。','中午','早上','下午','先生'],['王先生＿＿三點喝珍珠奶茶。','下午','幾','分','什麼']],
-   order:[{g:'幾點',t:['現在','幾','點'],a:['現在幾點'],end:'？'},
-          {g:'Time',t:['現在','早上','八點','十分'],a:['現在早上八點十分'],end:'。'},
-          {g:'Time + V',t:['我','中午','十二點','吃水果'],a:['我中午十二點吃水果','中午十二點我吃水果'],end:'。'}],
-   reading:{text:'李小姐早上七點喝茶，中午十二點吃水果。下午四點，她喝珍珠奶茶。她很喜歡珍珠奶茶。',
-     qs:[['李小姐幾點喝茶？','早上七點','中午十二點','下午四點','下午七點'],['李小姐下午喝什麼？','珍珠奶茶','茶','水','水果']]},
-   listen:{text:'現在上午十點二十分。王先生喝茶，李小姐喝珍珠奶茶。',
-     qs:[['現在幾點？','上午十點二十分','上午十二點十分','下午十點二十分','上午十點十二分'],['誰喝茶？','王先生','李小姐','王太太','李先生']]},
-   speak:{lines:['請問，現在幾點？','現在早上八點十分。'],ask:'現在幾點？'} },
+ /* Day 1 */
+ { title:'L2 Dialogue 1 (1)',
+   sents:[['今天是星期一，你不去學校嗎？','It is Monday today. Aren’t you going to school?'],['我早上沒有課，九點去圖書館。','I don’t have class in the morning. I’m going to the library at 9:00.'],['你叫什麼名字？','What’s your name?'],['你是台灣人嗎？','Are you Taiwanese?']],
+   phr:[['九點十分','十點九分','九點四十分','九點十二分'],['四點四十分','四點十四分','十點四十分','四點四分'],['早上九點','早上十點','下午九點','上午十點'],
+        ['下午兩點','上午兩點','下午十點','下午兩點十分'],['十點二十五分','十點十五分','十二點二十五分','十點二十分']],
+   mc:[['c','','現在十點十五分。','現在十五分十點。','現在十點十五點。','現在點十十五分。'],
+       ['c','','你幾點去圖書館？','你幾點去圖書館嗎？','幾點你去圖書館嗎？','你去圖書館幾點？'],
+       ['b','4:40','四點四十分','四十點四分','四點四分','四十分四點'],
+       ['c','','你是台灣人嗎？','嗎你是台灣人？','你嗎是台灣人？','你是嗎台灣人？'],
+       ['c','','你叫什麼名字？','你叫什麼名字嗎？','你叫名字什麼？','什麼你叫名字？']],
+   order:[{g:'幾點幾分',t:['請問，','現在','幾點','幾分'],a:['請問，現在幾點幾分'],end:'？'},
+          {g:'Dialogue 1',t:['今天是','星期一，','你','不去','學校','嗎'],a:['今天是星期一，你不去學校嗎'],end:'？'},
+          {g:'L1 · 嗎',t:['請問，','你','是','印尼人','嗎'],a:['請問，你是印尼人嗎'],end:'？'}],
+   reading:{table:{cap:'安娜的星期一',rows:[['8:10','去學校'],['9:00','上課'],['12:00','下課'],['12:30','去圖書館'],['4:40','回家']]},
+     qs:[['安娜幾點上課？','九點','八點十分','十二點','四點'],['安娜幾點回家？','四點四十分','四點十四分','十點四十分','四點四分']]},
+   listen:{qs:[['現在幾點？','現在九點十分。','我九點去。','今天星期一。','我沒有課。'],
+               ['你是印尼人嗎？','不是，我是日本人。','是，我日本人。','我嗎印尼人。','我叫印尼人。']]},
+   speak:{lines:['今天是星期一，你不去學校嗎？','我早上沒有課，九點去圖書館。'],ask:'你今天早上有課嗎？幾點去學校？'} },
 
- /* Day 2 日期 */
- { fill:[['今天星期＿＿？','幾','什麼','誰','哪'],['今天是十一月二十＿＿。','號','分','人','國'],['今天星期＿＿，我沒有課。','日','號','月','分'],
-         ['我今天＿＿有課。','沒','有','是','很'],['我星期一下午有＿＿。','課','號','月','星期']],
-   order:[{g:'星期幾',t:['今天','星期','幾'],a:['今天星期幾'],end:'？'},
-          {g:'Date',t:['今天','是','十一月','二十號'],a:['今天是十一月二十號'],end:'。'},
-          {g:'沒有',t:['我','星期日','沒有','課'],a:['我星期日沒有課','星期日我沒有課'],end:'。'}],
-   reading:{text:'今天是三月四號，星期五。王先生早上有課，下午沒有課。下午三點，他喝珍珠奶茶。',
-     qs:[['今天星期幾？','星期五','星期四','星期三','星期日'],['王先生下午有課嗎？','沒有課','有課','他下午喝茶','他下午三點有課']]},
-   listen:{text:'今天九月十號，星期二。我今天上午有課，下午沒有課。',
-     qs:[['今天幾月幾號？','九月十號','十月九號','九月二號','十月十號'],['今天星期幾？','星期二','星期三','星期四','星期日']]},
-   speak:{lines:['今天星期幾？','我星期日沒有課。'],ask:'今天幾月幾號？星期幾？'} },
+ /* Day 2 */
+ { title:'L2 Dialogue 1 (2)',
+   sents:[['中午呢？你中午回家嗎？','How about noon? Are you coming home at noon?'],['我下午有課，中午不回家。','I have class in the afternoon. I’m not coming home at noon.'],['我是日本人，你呢？','I’m Japanese. And you?'],['我姓王，你呢？','My surname is Wang. And you?']],
+   phr:[['中午回家','中午下課','下午回家','中午上課'],['下午上課','下午下課','上午上課','中午上課'],['早上去圖書館','早上去學校','中午去圖書館','早上回家'],
+        ['九點下課','九點上課','十點下課','九點十分下課'],['八點十分去學校','八點四十分去學校','十點八分去學校','八點十分回家']],
+   mc:[['c','','我八點去學校。','我去學校八點。','我去八點學校。','八點我學校去。'],
+       ['c','','他中午不回家。','他中午回家不。','他回家不中午。','不他中午回家。'],
+       ['c','','你幾點去圖書館？','你去圖書館幾點？','你去幾點圖書館？','幾點你圖書館去？'],
+       ['c','','我叫安娜，你呢？','我叫安娜，呢你？','我叫安娜，你呢叫？','我呢叫安娜，你？'],
+       ['b','「我是美國人，你呢？」','我是英國人。','我呢英國人。','你是英國人。','他呢是英國人。']],
+   order:[{g:'Dialogue 1',t:['我','下午有課，','中午','不','回家'],a:['我下午有課，中午不回家'],end:'。'},
+          {g:'S + Time + V',t:['你','星期一','早上','幾點','去圖書館'],a:['你星期一早上幾點去圖書館','星期一早上你幾點去圖書館'],end:'？'},
+          {g:'L1 · 呢',t:['我','是','日本人，','你','呢'],a:['我是日本人，你呢'],end:'？'}],
+   reading:{text:'我叫大衛。我星期一上午有課，中午十二點下課。中午我不回家，我去圖書館。下午三點，我回家。',
+     qs:[['大衛中午回家嗎？','不回家，他去圖書館','回家','他去學校上課','他十二點回家'],['大衛幾點回家？','下午三點','中午十二點','上午十點','下午兩點']]},
+   listen:{qs:[['你中午回家嗎？','不回家，我下午有課。','我中午十二點。','我是台灣人。','今天星期一。'],
+               ['我姓王，你呢？','我姓李。','我呢姓李。','你姓王。','他呢姓李。']]},
+   speak:{lines:['中午呢？你中午回家嗎？','我下午有課，中午不回家。'],ask:'你幾點去學校？幾點回家？'} },
 
- /* Day 3 去哪裡 */
- { fill:[['我早上八點＿＿學校。','去','有','是','叫'],['下午三點下課，我＿＿。','回家','上課','學校','圖書館'],['王小姐去＿＿上課。','學校','回家','下課','星期'],
-         ['九點上課，十二點＿＿。','下課','上課','回家','學校'],['我同學下午去＿＿。','圖書館','回家','下課','星期']],
-   order:[{g:'去 + Place',t:['我','早上','去','學校'],a:['我早上去學校','早上我去學校'],end:'。'},
-          {g:'Time + V',t:['他','下午四點','回家'],a:['他下午四點回家','下午四點他回家'],end:'。'},
-          {g:'幾點',t:['你','幾點','上課'],a:['你幾點上課'],end:'？'}],
-   reading:{text:'我叫安娜，我是印尼人。我星期一早上九點上課，十二點下課。下課，我去圖書館。下午四點，我回家。',
-     qs:[['安娜幾點下課？','十二點','九點','四點','十點'],['安娜下午四點＿＿。','回家','上課','去學校','去圖書館']]},
-   listen:{text:'大衛八點十分上課，中午十二點下課。下課，他回家吃水果。',
-     qs:[['大衛幾點上課？','八點十分','十點八分','八點','十二點'],['下課，大衛＿＿。','回家吃水果','去圖書館','去學校','喝茶']]},
-   speak:{lines:['我早上八點去學校。','下課，我去圖書館。'],ask:'你幾點上課？幾點回家？'} },
+ /* Day 3 */
+ { title:'L2 Dialogue 1 (3)',
+   sents:[['你幾點下課？','What time do you get out of class?'],['我四點四十分下課。','I get out of class at 4:40.'],['你是日本人嗎？','Are you Japanese?'],['我不是日本人，我是印尼人。','I’m not Japanese. I’m Indonesian.']],
+   phr:[['四點四十分下課','四點十四分下課','四點四十分上課','十點四十分下課'],['上午有課','上午沒有課','下午有課','中午有課'],['下午沒有課','下午有課','上午沒有課','中午沒有課'],
+        ['十二點下課','十點下課','十二點上課','十一點下課'],['八點上課','八點下課','四點上課','八點十分上課']],
+   mc:[['c','','我今天沒有課。','我今天不有課。','我今天沒課有。','我沒今天有課。'],
+       ['c','','你幾點下課？','你下課幾點？','你幾點下課嗎？','幾點你下課嗎？'],
+       ['c','','我朋友很漂亮。','我朋友是很漂亮。','我朋友很是漂亮。','我朋友漂亮很。'],
+       ['c','','我不是日本人，我是印尼人。','我不日本人，我印尼人。','我是不日本人。','我不是日本人，是我印尼人。'],
+       ['b','「王先生有孩子嗎？」','他沒有孩子。','他不有孩子。','他沒孩子有。','他有沒孩子。']],
+   order:[{g:'沒有',t:['我','星期三','下午','沒有','課'],a:['我星期三下午沒有課','星期三下午我沒有課'],end:'。'},
+          {g:'S + Time + V',t:['你','星期五','幾點','下課'],a:['你星期五幾點下課','星期五你幾點下課'],end:'？'},
+          {g:'L1 · 不是',t:['我','不是','日本人，','我是','印尼人'],a:['我不是日本人，我是印尼人'],end:'。'}],
+   reading:{table:{cap:'中明的課',rows:[['星期一 上午','沒有課'],['星期一 下午','1:00–4:40 有課'],['星期二 上午','9:00–12:00 有課'],['星期二 下午','沒有課']]},
+     qs:[['中明星期一上午有課嗎？','沒有課','有課','九點有課','十二點有課'],['中明星期二幾點下課？','十二點','四點四十分','九點','一點']]},
+   listen:{qs:[['你幾點下課？','我四點四十分下課。','我四十分下課四點。','我下午有課。','我不下課。'],
+               ['你是日本人嗎？','不是，我是印尼人。','不，我不日本人。','我很日本人。','是，我不是日本人。']]},
+   speak:{lines:['你幾點下課？','我四點四十分下課。'],ask:'你今天有課嗎？你幾點下課？'} },
 
- /* Day 4 家人 */
- { fill:[['她是我＿＿，她很漂亮。','媽媽','爸爸','先生','學校'],['我＿＿姓王，他是台灣人。','爸爸','媽媽','太太','小姐'],['我愛我＿＿。','家人','學校','下課','星期'],
-         ['我下午五點回＿＿。','家','號','課','月'],['王太太有＿＿嗎？','孩子','號','分','幾']],
-   order:[{g:'誰',t:['她','是','誰'],a:['她是誰'],end:'？'},
-          {g:'姓',t:['我','媽媽','姓','李'],a:['我媽媽姓李'],end:'。'},
-          {g:'Time + V',t:['爸爸','下午五點','回家'],a:['爸爸下午五點回家','下午五點爸爸回家'],end:'。'}],
-   reading:{text:'我叫大衛，我是美國人。我爸爸姓王，他是台灣人。我媽媽是美國人，她很漂亮。我很愛我家人。',
-     qs:[['大衛爸爸是哪國人？','台灣人','美國人','日本人','英國人'],['大衛媽媽＿＿。','很漂亮','是台灣人','是日本人','是英國人']]},
-   listen:{text:'安娜很愛她媽媽。她媽媽姓陳，很漂亮。',
-     qs:[['安娜很愛誰？','她媽媽','她爸爸','她同學','她孩子'],['安娜媽媽姓什麼？','陳','王','李','林']]},
-   speak:{lines:['我爸爸姓王，我媽媽姓李。','我很愛我家人。'],ask:'你爸爸、媽媽是哪國人？'} },
+ /* Day 4 */
+ { title:'L2 Dates',
+   sents:[['今天是五月十七日，星期一。','Today is Monday, May 17th.'],['今天幾月幾號？','What’s the date today?'],['你姓什麼？','What’s your surname?'],['我姓李，叫李美美。','My surname is Li. My name is Li Meimei.']],
+   phr:[['十二月七號','七月十二號','十二月十七號','十一月七號'],['星期天','星期一','星期四','星期三'],['五月十七日','五月七日','十月十七日','五月十一日'],
+        ['星期三下午','星期三上午','星期四下午','星期一下午'],['十一月三十號','十一月十三號','十月三十號','十二月三十號']],
+   mc:[['c','','今天是十二月七號。','今天是七號十二月。','今天是十二七月號。','今天是月十二號七。'],
+       ['c','','我星期天沒有課。','我沒有課星期天。','我星期天不有課。','星期天沒我有課。'],
+       ['c','','他姓王，叫王大中。','他叫王，姓王大中。','他是王，叫姓大中。','他姓王大中，叫王。'],
+       ['b','「今天星期幾？」','今天星期四。','今天四星期。','今天星期是幾。','今天幾星期四。'],
+       ['b','「你叫什麼名字？」','我叫安娜。','我姓安娜。','我是叫安娜。','我名字叫什麼。']],
+   order:[{g:'Date',t:['今天','是','五月','十七日，','星期一'],a:['今天是五月十七日，星期一'],end:'。'},
+          {g:'S + Time + V',t:['你','星期天','幾點','去','圖書館'],a:['你星期天幾點去圖書館','星期天你幾點去圖書館'],end:'？'},
+          {g:'L1 · 姓／叫',t:['我','姓李，','叫','李美美'],a:['我姓李，叫李美美'],end:'。'}],
+   reading:{text:'我叫林美美。今天是十一月二十七號，星期五。我今天下午有課。星期六、星期天，我沒有課。星期一早上八點，我去學校上課。',
+     qs:[['今天星期幾？','星期五','星期六','星期天','星期一'],['美美星期天有課嗎？','沒有課','有課','早上有課','下午有課']]},
+   listen:{qs:[['今天幾月幾號？','今天十一月三十號。','今天星期一。','今天三十點。','現在十點。'],
+               ['請問，你姓什麼？','我姓陳。','我叫姓陳。','我是什麼。','我姓陳美美。']]},
+   speak:{lines:['今天是五月十七日，星期一。','你幾點去學校？'],ask:'今天幾月幾號？星期幾？你今天有課嗎？'} },
 
- /* Day 5 綜合（新＋舊） */
- { fill:[['請問，你叫什麼＿＿？','名字','國','星期','家'],['今天星期一，我早上＿＿課。','有','是','叫','姓'],['現在下午四點，我＿＿家。','回','喝','吃','叫'],
-         ['她是日本人，她很＿＿。','漂亮','什麼','誰','幾'],['我很喜歡喝＿＿。','珍珠奶茶','水果','圖書館','學校']],
-   order:[{g:'哪國人',t:['你','是','哪','國人'],a:['你是哪國人'],end:'？'},
-          {g:'沒有',t:['我','星期三','下午','沒有','課'],a:['我星期三下午沒有課','星期三下午我沒有課'],end:'。'},
-          {g:'去 + Place',t:['我同學','中午','去','圖書館'],a:['我同學中午去圖書館','中午我同學去圖書館'],end:'。'}],
-   reading:{text:'大家好，我叫林美美，我是台灣人。今天星期六，我沒有課。上午十點，我去朋友家。我朋友是日本人，她很喜歡喝珍珠奶茶。下午五點，我回家。',
-     qs:[['林美美今天有課嗎？','沒有課','有課','上午有課','下午有課'],['她朋友是哪國人？','日本人','台灣人','中國人','印尼人']]},
-   listen:{text:'大衛是新同學，他是英國人。他星期一早上九點上課。',
-     qs:[['大衛是哪國人？','英國人','美國人','中國人','日本人'],['大衛幾點上課？','九點','十點','八點','九點十分']]},
-   speak:{lines:['你好，我叫安娜，我是印尼人。','我星期一早上九點上課。'],ask:'你叫什麼名字？你今天有課嗎？'} },
+ /* Day 5 */
+ { title:'L2 Dialogue 1 Review',
+   sents:[['今天是星期一，你不去學校嗎？','It is Monday today. Aren’t you going to school?'],['我早上沒有課，九點去圖書館。','I don’t have class in the morning. I’m going to the library at 9:00.'],
+          ['中午呢？你中午回家嗎？','How about noon? Are you coming home at noon?'],['我下午有課，中午不回家。','I have class in the afternoon. I’m not coming home at noon.'],
+          ['你喜歡喝什麼？','What do you like to drink?'],['我很喜歡喝珍珠奶茶。','I really like bubble tea.']],
+   phr:[['星期一早上','星期一中午','星期日早上','星期四早上'],['九點去圖書館','九點去學校','十點去圖書館','九點回家'],['中午不回家','中午回家','下午不回家','中午不上課'],
+        ['四點四十分下課','四點四十分上課','四點十四分下課','十點四十分下課'],['今天沒有課','今天有課','星期天沒有課','今天下午有課']],
+   l1s:[['你叫什麼名字？','你姓什麼？','你是哪國人？','她是誰？'],['你是哪國人？','你叫什麼名字？','你喜歡喝什麼？','你姓什麼？'],
+        ['我喜歡喝茶。','我喜歡喝水。','我喜歡吃水果。','我不喜歡喝茶。'],['她是我媽媽。','她是我朋友。','他是我爸爸。','她是我同學。'],
+        ['我是印尼人，你呢？','我是日本人，你呢？','我是印尼人，他呢？','你是印尼人嗎？']],
+   mc:[['c','','我中午不回家。','我不回家中午。','我中午回家不。','我回家中午不。'],
+       ['c','','我早上沒有課，九點去圖書館。','我早上不有課，九點去圖書館。','我早上沒有課，去圖書館九點。','我沒有早上課，九點去圖書館。'],
+       ['c','','我很喜歡喝茶。','我喝茶很喜歡。','我很喝喜歡茶。','喜歡我很喝茶。'],
+       ['b','「你星期幾有課？」','我星期一、星期三有課。','我有課星期一。','我星期有課一。','我一星期有課。'],
+       ['b','「你喜歡喝什麼？」','我喜歡喝茶。','我喝喜歡茶。','我是茶。','我喜歡什麼。']],
+   order:[{g:'Dialogue 1',t:['我','早上','沒有課，','九點','去圖書館'],a:['我早上沒有課，九點去圖書館'],end:'。'},
+          {g:'S + Time + V',t:['中明','下午','四點四十分','下課'],a:['中明下午四點四十分下課'],end:'。'},
+          {g:'L1 · S-V-O',t:['我','很','喜歡','喝','珍珠奶茶'],a:['我很喜歡喝珍珠奶茶'],end:'。'}],
+   reading:{text:'今天是星期一。中明早上沒有課，他九點去圖書館。他下午有課，中午不回家。他四點四十分下課。',
+     qs:[['中明幾點去圖書館？','九點','四點四十分','十二點','九點四十分'],['中明中午回家嗎？','不回家','回家','他中午下課','他中午去學校']]},
+   listen:{qs:[['你幾點去圖書館？','我九點去。','我去九點。','我圖書館九點。','我不圖書館。'],
+               ['你喜歡喝茶嗎？','很喜歡。','我很茶。','我是喝茶。','我喜歡呢。']]},
+   speak:{lines:['我早上沒有課，九點去圖書館。','我下午有課，中午不回家。'],ask:'你星期一幾點去學校？中午回家嗎？'} },
 
- /* Day 6 綜合（新＋舊） */
- { fill:[['「請問，你＿＿什麼？」「我姓王。」','姓','叫','是','有'],['王小姐是我＿＿，她很喜歡吃水果。','朋友','學校','星期','號'],['今天十月十＿＿，星期五。','號','點','分','國'],
-         ['他早上七點去＿＿，下午三點下課。','學校','回家','家人','水果'],['「謝謝！」「＿＿。」','不客氣','你好','請問','謝謝']],
-   order:[{g:'幾點',t:['請問，','現在','幾','點'],a:['請問，現在幾點'],end:'？'},
-          {g:'很喜歡',t:['我','很','喜歡','吃水果'],a:['我很喜歡吃水果'],end:'。'},
-          {g:'去 + Place',t:['我媽媽','星期日','去','圖書館'],a:['我媽媽星期日去圖書館','星期日我媽媽去圖書館'],end:'。'}],
-   reading:{text:'王先生是台灣人，王太太是日本人。今天是星期日，王先生沒有課，他早上去圖書館。中午十二點，他回家吃水果。',
-     qs:[['王太太是哪國人？','日本人','台灣人','美國人','中國人'],['王先生幾點回家？','中午十二點','早上十點','下午五點','上午九點']]},
-   listen:{text:'李小美是我同學，她是中國人。她很喜歡喝茶。',
-     qs:[['李小美是哪國人？','中國人','日本人','台灣人','美國人'],['李小美喜歡喝什麼？','茶','水','珍珠奶茶','水果']]},
-   speak:{lines:['我很喜歡喝珍珠奶茶。','我下午五點回家。'],ask:'你家人是哪國人？你幾點回家？'} }
+ /* Day 6 */
+ { title:'L2 Review',
+   sents:[['今天是星期一，你不去學校嗎？','It is Monday today. Aren’t you going to school?'],['我早上沒有課，九點去圖書館。','I don’t have class in the morning. I’m going to the library at 9:00.'],
+          ['中午呢？你中午回家嗎？','How about noon? Are you coming home at noon?'],['我下午有課，中午不回家。','I have class in the afternoon. I’m not coming home at noon.'],
+          ['你幾點下課？','What time do you get out of class?'],['我四點四十分下課。','I get out of class at 4:40.'],
+          ['她是誰？','Who is she?'],['她是我媽媽。','She is my mom.'],['你是哪國人？','What country are you from?']],
+   phr:[['下午兩點十分','下午十點兩分','上午兩點十分','下午兩點四十分'],['星期天沒有課','星期天有課','星期一沒有課','星期三沒有課'],['十一月三十號','十一月十三號','十月三十號','十二月三十號'],
+        ['五點回家','五點上課','四點回家','五點十分回家'],['上午有課','上午沒有課','下午有課','中午有課']],
+   l1s:[['你姓什麼？','你是哪國人？','你喜歡什麼？','她姓什麼？'],['我姓王，叫王大中。','我姓王，叫王中明。','我姓李，叫李大中。','他姓王，叫王大中。'],
+        ['你是台灣人嗎？','你是日本人嗎？','他是台灣人嗎？','你是台灣人。'],['我不是美國人。','我是美國人。','我不是英國人。','他不是美國人。'],
+        ['你喜歡喝什麼？','你喜歡吃什麼？','你喜歡喝茶嗎？','他喜歡喝什麼？']],
+   mc:[['c','','現在下午兩點十分。','現在兩點十分下午。','現在下午十分兩點。','現在下午兩分十點。'],
+       ['c','','我不是美國人，我是英國人。','我不美國人，我英國人。','我是不美國人。','我不是美國人，是我英國人。'],
+       ['b','「王太太有孩子嗎？」','有，她有孩子。','是，她孩子。','她不有孩子。','她很有孩子。'],
+       ['b','「她是誰？」','她是我媽媽。','她誰是我媽媽。','她叫我媽媽。','她姓我媽媽。'],
+       ['b','「你是哪國人？」','我是印尼人。','我哪國人。','我叫印尼人。','我是印尼。']],
+   order:[{g:'Date',t:['今天','是','十一月','三十號，','星期一'],a:['今天是十一月三十號，星期一'],end:'。'},
+          {g:'S + Time + V',t:['媽媽','下午','五點','回家'],a:['媽媽下午五點回家','下午五點媽媽回家'],end:'。'},
+          {g:'L1 · 叫',t:['請問，','你','叫','什麼','名字'],a:['請問，你叫什麼名字'],end:'？'}],
+   reading:{table:{cap:'王先生的星期天',rows:[['8:00','喝茶'],['10:00','去圖書館'],['12:00','回家吃水果'],['3:00','喝珍珠奶茶']]},
+     qs:[['王先生幾點去圖書館？','上午十點','早上八點','中午十二點','下午三點'],['王先生中午吃什麼？','水果','珍珠奶茶','茶','水']]},
+   listen:{text:'我叫安娜，我是印尼人。今天是星期三，我上午有課，十一點四十分下課。下午我不去學校，我回家。',
+     qs:[['安娜幾點下課？','十一點四十分','四點十一分','十一點四分','四點四十分'],['安娜是哪國人？','印尼人','日本人','台灣人','美國人']]},
+   speak:{lines:['今天是星期一，你不去學校嗎？我早上沒有課，九點去圖書館。','中午呢？你中午回家嗎？我下午有課，中午不回家。'],ask:'你星期一幾點去學校？幾點下課？幾點回家？'} }
 ];
 
 /* ================= 工具 ================= */
@@ -272,11 +328,31 @@ function dayIndexNow(){
   const [y,m,d]=CONFIG.START_DATE.split('-').map(Number);
   return Math.round((today-Date.UTC(y,m-1,d))/86400e3);
 }
-const COUNT = {vocab:10, oldReview:5, fill:5, nums:2, order:3, reading:2, listen:2, read:2};   // 每部分題數
-function isReview(){return S.day>=DAYS.length-2}
-function oldSetToday(){const list=OLD_REVIEW[S.day-(DAYS.length-2)]||[];return list.map(h=>OLD_VOCAB.find(o=>o.h===h)).filter(Boolean)}
 const PREVIEW = !CONFIG.API_URL || location.hash==='#preview';
-const TEST = !PREVIEW && location.hash==='#test';   // 老師測試：可選日期，真的送出
+const TEST = !PREVIEW && location.hash==='#test';
+
+/* 當天字卡：找出當天內容裡出現的第二課、第一課生詞（長的詞先找） */
+const ALLW = VOCAB.concat(L1).slice().sort((a,b)=>b.h.length-a.h.length);
+function dayText(D){
+  const parts=[];
+  (D.phr||[]).forEach(x=>parts.push(x[0]));
+  (D.l1s||[]).forEach(x=>parts.push(x[0]));
+  D.mc.forEach(x=>parts.push(x[1],x[2]));
+  D.order.forEach(o=>parts.push(o.a[0]));
+  if(D.reading.text)parts.push(D.reading.text);
+  if(D.reading.table)D.reading.table.rows.forEach(r=>parts.push(r.join(' ')));
+  D.reading.qs.forEach(q=>parts.push(q[0],q[1]));
+  if(D.listen.text)parts.push(D.listen.text);
+  D.listen.qs.forEach(q=>parts.push(q[0],q[1]));
+  parts.push(...D.speak.lines,D.speak.ask);
+  D.sents.forEach(s=>parts.push(s[0]));
+  return parts.join('｜');
+}
+function cardWords(dayIdx){
+  let t=dayText(DAYS[dayIdx]);const hit=new Set();
+  for(const w of ALLW){if(t.includes(w.h)){hit.add(w);t=t.split(w.h).join('\u0000')}}
+  return VOCAB.filter(w=>hit.has(w)).concat(L1.filter(w=>hit.has(w)));
+}
 
 let voice=null;
 function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>/zh[-_]TW/i.test(v.lang))||vs.find(v=>/^zh/i.test(v.lang))||null}
@@ -288,10 +364,11 @@ function speak(text,rate=0.85){
 }
 
 /* ================= 狀態 ================= */
-const S={name:store.get('pr_name')||'',day:0,step:-1,cards:false,results:[],recs:{}};
+const NAME_KEY='huayu_daily_name';
+const S={name:(n=>STUDENTS.includes(n)?n:'')(store.get(NAME_KEY)),day:0,step:-1,cards:false,results:[],recs:{}};
 
 function header(){
-  $('#brand').textContent=`Modern Chinese ${CONFIG.LESSON} · ${dateOf(S.day).label}`;
+  $('#brand').textContent=`${DAYS[S.day].title} · ${dateOf(S.day).label}`;
   $('#who').textContent=S.name||'';
   const show=S.cards||(S.step>=0&&S.step<=5);
   const pos=S.cards?0:S.step+1;
@@ -305,6 +382,7 @@ function teacherBar(){
   t.innerHTML=(TEST?'<span>老師測試（會真的送出，請選「老師測試」）</span>':'<span>Teacher preview (nothing is submitted)</span>')+DAYS.map((_,i)=>`<button type="button" data-d="${i}" class="${i===S.day?'on':''}">${dateOf(i).short}</button>`).join('');
   t.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.day=+b.dataset.d;S.results=[];S.recs={};teacherBar();renderCards()});
 }
+function weekURL(name){return `${CONFIG.API_URL}?action=week&name=${encodeURIComponent(name)}&lesson=${CONFIG.LESSON}&start=${CONFIG.START_DATE}&days=${DAYS.length}`}
 
 /* ================= 登入 ================= */
 function renderLogin(){
@@ -327,9 +405,9 @@ function renderLogin(){
     const a=$('#sel').value,b=$('#typed').value.trim();
     if(!a){$('#err').textContent='Please choose your name.';return}
     if(a!==b){$('#err').textContent='The two names do not match. Please check again.';return}
-    S.name=a;store.set('pr_name',a);
+    S.name=a;store.set(NAME_KEY,a);
     if(!PREVIEW){
-      try{const r=await fetch(`${CONFIG.API_URL}?action=week&name=${encodeURIComponent(a)}`);const j=await r.json();
+      try{const r=await fetch(weekURL(a));const j=await r.json();
         if((j.dates||[]).includes(dateOf(S.day).iso)){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(j.dates,j.scores)}</div>`;return}}catch(err){}
     }
     S.results=[];S.recs={};
@@ -340,34 +418,36 @@ function renderLogin(){
 /* ================= 0. 字卡（不計分） ================= */
 function renderCards(){
   S.cards=true;S.step=-1;header();
-  const d=S.day+1, review=isReview();
-  const todays=review?VOCAB.concat(oldSetToday()):VOCAB.filter(v=>v.d===d);
-  const allSoFar=VOCAB.filter(v=>v.d<=d);
-  let set=todays, order=set.slice(), i=0, mode='card';
+  const D=DAYS[S.day];
+  const words=cardWords(S.day);
+  const sents=D.sents.map(([h,e])=>({h,e,s:true}));
+  let set='w', order=words.slice(), i=0, mode='card';
+  const cur=()=>set==='w'?words:sents;
   function paint(){
     const w=order[i];
-    const setBtns=`<div class="grp"><button class="chip ${set===todays?'on':''}" data-set="t" type="button">${review?'This lesson':'Today'}</button>${(!review&&d>1)?`<button class="chip ${set===allSoFar?'on':''}" data-set="a" type="button">All so far</button>`:''}</div>`;
+    const setBtns=`<div class="grp"><button class="chip ${set==='w'?'on':''}" data-set="w" type="button">Words</button><button class="chip ${set==='s'?'on':''}" data-set="s" type="button">Sentences</button></div>`;
     let body;
     if(mode==='card'){
+      const tag=w.l==='L1'?`<span class="tag" style="position:absolute;top:12px;left:12px">L1</span>`:'';
       body=`<div class="count">Card ${i+1} of ${order.length}</div>
       <div class="flip" id="flip"><div class="flip-inner">
-        <div class="face front">${w.old?`<span class="tag" style="position:absolute;top:12px;left:12px">${w.l}</span>`:''}<button class="c-say" type="button" data-say>🔊</button><div class="c-han">${esc(w.h)}</div><div class="c-hint">Tap to flip</div></div>
-        <div class="face back"><button class="c-say" type="button" data-say>🔊</button><div class="c-han">${esc(w.h)}</div><div class="c-py">${esc(w.p)}</div><div class="c-en">${esc(w.e)}</div></div>
+        <div class="face front">${tag}<button class="c-say" type="button" data-say>🔊</button><div class="c-han${w.s?' s':''}">${esc(w.h)}</div><div class="c-hint">Tap to flip</div></div>
+        <div class="face back"><button class="c-say" type="button" data-say>🔊</button><div class="c-han${w.s?' s':''}">${esc(w.h)}</div>${w.p?`<div class="c-py">${esc(w.p)}</div>`:''}<div class="c-en">${esc(w.e)}</div></div>
       </div></div>
       <div class="row2"><button class="btn ghost" id="pv" type="button" ${i===0?'disabled':''}>← Back</button><button class="btn ghost" id="nx" type="button" ${i===order.length-1?'disabled':''}>Next →</button></div>`;
     }else{
-      body=`<div class="count">${order.length} words</div><div class="panel" style="padding:8px 14px"><table class="vlist">${order.map((v,k)=>`<tr><td class="h">${esc(v.h)}${v.old?` <span class="tag">${v.l}</span>`:''}</td><td><div class="p">${esc(v.p)}</div><div class="e">${esc(v.e)}</div></td><td style="text-align:right"><button type="button" data-k="${k}">🔊</button></td></tr>`).join('')}</table></div>`;
+      body=`<div class="count">${order.length} ${set==='w'?'words':'sentences'}</div><div class="panel" style="padding:8px 14px"><table class="vlist">${order.map((v,k)=>`<tr><td class="h${v.s?' s':''}">${esc(v.h)}${v.l==='L1'?` <span class="tag">L1</span>`:''}</td><td>${v.p?`<div class="p">${esc(v.p)}</div>`:''}<div class="e">${esc(v.e)}</div></td><td style="text-align:right"><button type="button" data-k="${k}">🔊</button></td></tr>`).join('')}</table></div>`;
     }
-    app.innerHTML=`<h1>Flashcards</h1><p class="sub">${review?`Review all of ${CONFIG.LESSON} and some words from earlier lessons.`:'Review today’s new words.'} This part is not scored.</p>
+    app.innerHTML=`<h1>Flashcards</h1><p class="sub">Review today’s words and sentences. This part is not scored.</p>
     <div class="cardbar">${setBtns}<div class="grp"><button class="chip" id="shf" type="button">Shuffle</button><button class="chip" id="mode" type="button">${mode==='card'?'List':'Cards'}</button></div></div>
     ${body}
     <div style="margin-top:22px"><button class="btn" id="go" type="button">I’m ready · Start the quiz</button></div>`;
-    app.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{set={t:todays,a:allSoFar}[b.dataset.set];order=set.slice();i=0;paint()});
-    $('#shf').onclick=()=>{order=shuffle(set,Math.random);i=0;paint()};
+    app.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{set=b.dataset.set;order=cur().slice();i=0;paint()});
+    $('#shf').onclick=()=>{order=shuffle(cur(),Math.random);i=0;paint()};
     $('#mode').onclick=()=>{mode=mode==='card'?'list':'card';paint()};
     $('#go').onclick=()=>{S.cards=false;document.onkeydown=null;renderLogin()};
     if(mode==='card'){
-      $('#flip').onclick=e=>{if(e.target.closest('[data-say]')){speak(w.h,0.75);return}$('#flip').classList.toggle('turned')};
+      $('#flip').onclick=e=>{if(e.target.closest('[data-say]')){speak(w.h,w.s?0.8:0.75);return}$('#flip').classList.toggle('turned')};
       $('#pv').onclick=()=>{if(i>0){i--;paint()}};
       $('#nx').onclick=()=>{if(i<order.length-1){i++;paint()}};
     }else{
@@ -383,40 +463,42 @@ function renderCards(){
   paint();
 }
 
-/* ================= 1. 生詞測驗（自動出 15 題） ================= */
+/* ================= 1. 生詞（聽片語／句子 5 題＋當天字卡 5 題，或第一課句子 5 題） ================= */
 function vocabQs(){
-  const r=rng(S.name+'v'+S.day), d=S.day+1;
-  const pool=VOCAB.filter(v=>v.d<=d), fresh=pool.filter(v=>v.d===d), old=pool.filter(v=>v.d<d);
-  const review=isReview();   // 最後兩天：新課＋舊課綜合
-  const oldPick=review?shuffle(oldSetToday(),r).slice(0,COUNT.oldReview):[];
-  const nNew=COUNT.vocab-oldPick.length;
-  let pick=review?shuffle(pool,r):shuffle(fresh,r).concat(shuffle(old,r));   // 先考今天的新詞，不夠再補前幾天的
-  pick=pick.slice(0,nNew);
-  while(pick.length<nNew)pick.push(fresh.length?fresh[Math.floor(r()*fresh.length)]:pool[Math.floor(r()*pool.length)]);
-  pick=pick.concat(oldPick);
-  const formats=[['h','p'],['h','e'],['a','h'],['a','e'],['a','p'],['e','h'],['p','h']];
-  const used=new Set();
-  return shuffle(pick,r).map((v,i)=>{
-    let f;for(let k=0;k<10;k++){f=formats[Math.floor(r()*formats.length)];if(!used.has(v.h+f))break}
-    used.add(v.h+f);
-    const [show,ans]=f, key={h:'h',p:'p',e:'e'}[ans];
-    const base=v.old?OLD_VOCAB.concat(pool):pool;
-    const others=shuffle(base.filter(o=>o.h!==v.h&&o[key]!==v[key]),r).concat(shuffle(VOCAB.filter(o=>o.d>d&&o[key]!==v[key]),r));
-    const wrong=[];for(const o of others){if(!wrong.includes(o[key]))wrong.push(o[key]);if(wrong.length===3)break}
-    const prompt={h:ans==='p'?'Choose the pinyin.':'Choose the meaning.',a:'Listen and choose the '+(ans==='h'?'characters':ans==='p'?'pinyin':'meaning')+'.',e:'Choose the characters.',p:'Choose the characters.'}[show];
-    return{type:'mc',sec:'生詞',q:prompt,show,word:v,ans:v[key],wrong,ansKind:ans,id:'v'+i};
-  });
+  const D=DAYS[S.day], r=rng(S.name+'v'+S.day);
+  const listenItem=(x,k)=>({type:'mc',sec:'生詞',q:'Listen and choose what you hear.',say:x[0],ans:x[0],wrong:x.slice(1),han:true,id:'p'+k});
+  let qs=D.phr.map(listenItem);
+  if(D.l1s){qs=qs.concat(D.l1s.map((x,k)=>listenItem(x,k+10)))}
+  else{
+    const words=cardWords(S.day);
+    const pick=shuffle(words,r).slice(0,5);
+    const formats=[['h','p'],['h','e'],['a','h'],['a','e'],['e','h'],['p','h']];
+    qs=qs.concat(pick.map((v,i)=>{
+      const [show,ans]=formats[Math.floor(r()*formats.length)];
+      const pool=(v.l==='L1'?L1:VOCAB).concat(words);
+      const wrong=[];for(const o of shuffle(pool,r)){if(o[ans]!==v[ans]&&!wrong.includes(o[ans]))wrong.push(o[ans]);if(wrong.length===3)break}
+      const prompt={h:ans==='p'?'Choose the pinyin.':'Choose the meaning.',a:'Listen and choose the '+(ans==='h'?'characters':'meaning')+'.',e:'Choose the characters.',p:'Choose the characters.'}[show];
+      return{type:'mc',sec:'生詞',q:prompt,show,word:v,ans:v[ans],wrong,han:ans==='h',id:'v'+i};
+    }));
+  }
+  return shuffle(qs,r);
 }
 
 /* ================= 共用：選擇題流程 ================= */
+const MC_PROMPT={c:'Choose the correct sentence.',b:'Choose the best answer.'};
 function sectionQs(step){
   const D=DAYS[S.day];
-  const mc=(q,extra)=>Object.assign({type:'mc',q:q[0],ans:q[1],wrong:q.slice(2)},extra);
-  if(step===1){const nums=(D.nums||[]).slice(0,COUNT.nums);
-    return D.fill.slice(0,COUNT.fill-nums.length).map(q=>mc(q,{sec:'填空'})).concat(nums.map(q=>({type:'mc',sec:'填空',q:'Listen and choose the number.',say:q[0],ans:q[1],wrong:q.slice(2)})));}
-  if(step===2)return D.order.slice(0,COUNT.order).map(o=>({type:'order',sec:'重組',o}));
-  if(step===3)return D.reading.qs.slice(0,COUNT.reading).map(q=>mc(q,{sec:'閱讀',passage:D.reading.text}));
-  if(step===4)return D.listen.qs.slice(0,COUNT.listen).map(q=>mc(q,{sec:'聽力',listen:D.listen.text}));
+  if(step===1)return D.mc.map(x=>({type:'mc',sec:'填空',q:MC_PROMPT[x[0]],stem:x[1],ans:x[2],wrong:x.slice(3),han:true}));
+  if(step===2)return D.order.map(o=>({type:'order',sec:'重組',o}));
+  if(step===3)return D.reading.qs.map(q=>({type:'mc',sec:'閱讀',q:'Read and answer.',stem:q[0],ans:q[1],wrong:q.slice(2),han:true,reading:D.reading}));
+  if(step===4){
+    if(D.listen.text)return D.listen.qs.map(q=>({type:'mc',sec:'聽力',q:'Listen and answer.',stem:q[0],ans:q[1],wrong:q.slice(2),han:true,listen:D.listen.text}));
+    return D.listen.qs.map(q=>({type:'mc',sec:'聽力',q:'Listen and choose the best answer.',listen:q[0],ans:q[1],wrong:q.slice(2),han:true,each:true}));
+  }
+}
+function readingHTML(R){
+  if(R.table)return`<div class="passage"><table><caption>${esc(R.table.cap)}</caption>${R.table.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>`;
+  return`<div class="passage">${esc(R.text)}</div>`;
 }
 function runQuiz(step,qs){
   S.step=step;header();
@@ -426,29 +508,28 @@ function runQuiz(step,qs){
   function draw(){
     const it=qs[i];
     let head=`<h1>${STEP_NAMES[step]}</h1><div class="count">Question ${i+1} of ${qs.length}</div>`;
-    if(it.passage)head+=`<div class="passage">${esc(it.passage)}</div>`;
+    if(it.reading)head+=readingHTML(it.reading);
     if(it.listen)head+=`<div class="play"><button class="btn" id="pl" type="button">▶ Play</button><button class="btn ghost" id="pls" type="button">▶ Slow</button></div>`;
     if(it.type==='order')return drawOrder(it,head);
     let stim='';
-    if(it.show==='h')stim=`<div class="qhan">${esc(it.word.h)}</div>`;
+    if(it.stem)stim=`<div class="stem">${esc(it.stem)}</div>`;
+    else if(it.show==='h')stim=`<div class="qhan">${esc(it.word.h)}</div>`;
     else if(it.show==='e')stim=`<div class="q" style="text-align:center;font-size:24px">${esc(it.word.e)}</div>`;
     else if(it.show==='p')stim=`<div class="q" style="text-align:center;font-size:28px">${esc(it.word.p)}</div>`;
     else if(it.show==='a'||it.say)stim=`<div class="listen-big"><button type="button" id="sayw">🔊 Play</button></div>`;
     const opts=shuffle([it.ans,...it.wrong],rng(S.name+it.q+it.ans+i));
-    const hanOpt=it.ansKind==='h';
-    app.innerHTML=head+`<div class="panel"><div class="q">${esc(it.q)}</div>${stim}<div class="opts">${opts.map((o,k)=>`<button class="opt${hanOpt?' han':''}" type="button" data-k="${k}">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div><div id="nx"></div></div>`;
-    if(it.listen){$('#pl').onclick=()=>speak(it.listen,0.85);$('#pls').onclick=()=>speak(it.listen,0.6)}
+    app.innerHTML=head+`<div class="panel"><div class="q">${esc(it.q)}</div>${stim}<div class="opts">${opts.map((o,k)=>`<button class="opt${it.han?' han':''}" type="button" data-k="${k}">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div><div id="nx"></div></div>`;
+    if(it.listen){$('#pl').onclick=()=>speak(it.listen,0.85);$('#pls').onclick=()=>speak(it.listen,0.6);if(it.each)speak(it.listen,0.85)}
     if(it.show==='a'){$('#sayw').onclick=()=>speak(it.word.h,0.75);speak(it.word.h,0.75)}
     if(it.say){$('#sayw').onclick=()=>speak(it.say,0.75);speak(it.say,0.75)}
     app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
       const pick=opts[+b.dataset.k],ok=pick===it.ans;
-      S.results.push({sec:it.sec,q:it.word?it.word.h:(it.say||it.q),pick,ok});
+      S.results.push({sec:it.sec,q:it.word?it.word.h:(it.say||it.stem||it.listen||it.q),pick,ok});
       app.querySelectorAll('.opt').forEach(x=>{x.disabled=true;const v=opts[+x.dataset.k];if(v===it.ans)x.classList.add('ok');else if(x===b)x.classList.add('bad')});
       let fb=ok?'Correct!':'Answer: '+it.ans;
       if(it.word)fb+=`　${it.word.h}・${it.word.p}・${it.word.e}`;
-      if(it.say)fb+=`　（${it.say}）`;
       $('#fb').className='fb '+(ok?'ok':'bad');$('#fb').textContent=fb;
-      if(it.listen&&i===qs.length-1)$('#fb').insertAdjacentHTML('afterend',`<p class="note">Transcript: ${esc(it.listen)}</p>`);
+      if(it.listen&&(it.each||i===qs.length-1))$('#fb').insertAdjacentHTML('afterend',`<p class="note">Transcript: ${esc(it.listen)}</p>`);
       $('#nx').innerHTML='<button class="btn" type="button" style="margin-top:14px">Next</button>';$('#nx').firstChild.onclick=next;
     });
   }
@@ -458,7 +539,7 @@ function runQuiz(step,qs){
     let picked=[];
     function paint(){
       const left=pool.filter(p=>!picked.includes(p));
-      app.innerHTML=head+`<div class="panel"><span class="tag">Grammar: ${esc(o.g)}</span><div class="q">Tap the words to make a correct sentence.</div>
+      app.innerHTML=head+`<div class="panel"><span class="tag">${esc(o.g)}</span><div class="q">Tap the words to make a sentence.</div>
       <div class="answer"><div class="tiles">${picked.map((p,k)=>`<button class="tile" data-a="${k}" type="button">${esc(p.t)}</button>`).join('')}</div></div>
       <div class="tiles">${left.map(p=>`<button class="tile" data-p="${p.k}" type="button">${esc(p.t)}</button>`).join('')}</div>
       <div class="fb" id="fb"></div><div id="nx"><button class="btn" id="chk" type="button" style="margin-top:14px" ${left.length?'disabled':''}>Check</button></div></div>`;
@@ -477,13 +558,13 @@ function runQuiz(step,qs){
   draw();
 }
 
-/* ================= 6. 錄音：朗讀 3 句＋回答 1 題 ================= */
+/* ================= 6. 錄音：朗讀 2 句＋回答 1 題 ================= */
 function renderSpeak(){
   S.step=5;header();
   const sp=DAYS[S.day].speak;
-  const items=sp.lines.slice(0,COUNT.read).map((l,k)=>({id:'read'+(k+1),label:`Read aloud ${k+1}`,text:l})).concat([{id:'answer',label:'Answer the question',text:sp.ask,ask:true}]);
+  const items=sp.lines.map((l,k)=>({id:'read'+(k+1),label:`Read aloud ${k+1}`,text:l})).concat([{id:'answer',label:'Answer in Chinese',text:sp.ask,ask:true}]);
   app.innerHTML=`<h1>Recording</h1><p class="sub">Record each item separately. You can listen and re-record. Submit opens after all ${items.length} are recorded.</p>
-  <div class="panel">${items.map(it=>`<div class="recitem" id="ri-${it.id}"><span class="tag">${it.label}</span><div class="sent">${it.ask?'<span class="note">Answer in Chinese:</span><br>':''}${esc(it.text)}</div><div class="rbar" id="rb-${it.id}"></div></div>`).join('')}</div>
+  <div class="panel">${items.map(it=>`<div class="recitem" id="ri-${it.id}"><span class="tag">${it.label}</span><div class="sent">${esc(it.text)}</div><div class="rbar" id="rb-${it.id}"></div></div>`).join('')}</div>
   <div style="margin-top:16px"><button class="btn" id="send" type="button" disabled>Submit</button>${PREVIEW?'<p class="note">Teacher preview: you can submit without recording to see the results page.</p>':''}<div class="err" id="err"></div></div>`;
   let active=null;
   const MIN_SEC=1.5, MIN_LEVEL=0.02, MIN_BYTES=2000;
@@ -513,7 +594,6 @@ function renderSpeak(){
     const box=$('#rb-'+it.id);const t0=Date.now();
     box.innerHTML=`<button class="recbtn stop" type="button" data-st>■ Stop</button><span class="timer">0:00</span><span class="meter"><i></i></span>`;
     const tm=box.querySelector('.timer'), bar=box.querySelector('.meter i');
-    // 即時音量：確認真的有聲音
     let ac=null,an=null,data=null,maxLevel=null;
     try{const AC=window.AudioContext||window.webkitAudioContext;ac=new AC();an=ac.createAnalyser();an.fftSize=1024;ac.createMediaStreamSource(stream).connect(an);data=new Float32Array(an.fftSize);maxLevel=0}catch(e){ac=null}
     const tick=setInterval(()=>{
@@ -564,7 +644,7 @@ async function submit(items){
   if(PREVIEW){return renderDone(score,total,null)}
   try{
     const audios=[];for(const it of items){const b=S.recs[it.id];const m=(S.meta&&S.meta[it.id])||{};audios.push({label:it.label,b64:await toB64(b),mime:b.type||'audio/mpeg',dur:m.dur??null,level:m.level??null,size:b.size})}
-    const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,score:score100,correct:score,total,results:S.results,audios});
+    const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,start:CONFIG.START_DATE,days:DAYS.length,score:score100,correct:score,total,results:S.results,audios});
     const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
     const j=await r.json();if(!j.ok)throw new Error(j.error||'error');
     const sc=j.scores||{};if(sc[dateOf(S.day).iso]==null)sc[dateOf(S.day).iso]=score100;
@@ -575,7 +655,7 @@ async function submit(items){
   }
 }
 
-/* ================= 完成＋本週繳交紀錄 ================= */
+/* ================= 完成＋本課分數 ================= */
 function weekHTML(dates,scores){
   scores=scores||{};const done=new Set(dates||[]);const today=S.day;let n=0;const got=[];
   const cells=DAYS.map((_,i)=>{const d=dateOf(i);const y=done.has(d.iso);
